@@ -218,6 +218,7 @@ public class GameMaster {
 			for(Piece item: geschlagene){
 				System.out.print(item.getSymbol()+", ");
 			}
+			System.out.println("\n");
 			
 			this.listenUser();
 			

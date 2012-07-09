@@ -1,5 +1,7 @@
 package pieces;
 
+import java.util.ArrayList;
+
 public class Bishop extends Piece{
 	private int count;
 	
@@ -9,6 +11,69 @@ public class Bishop extends Piece{
 
 	public void setCount(int count) {
 		this.count = count;
+	}
+	
+	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd, Piece[][] board){
+		
+		ArrayList<String> possibleDestinations = new ArrayList<String>();
+		String destPoint = xPosEnd+","+yPosEnd;
+		
+		//nach rechts unten
+		for (int i=1;i<=7; i++){
+			int xPosTest = xPosStart+i;
+			int yPosTest = yPosStart+i;
+			if(board[yPosTest][xPosTest].getSymbol()=="  "){
+				possibleDestinations.add(xPosTest+","+yPosTest);
+			}else{
+				possibleDestinations.add(xPosTest+","+yPosTest);
+				i=8;
+			}
+		}
+		//nach rechts oben
+		for (int i=1;i<=7; i++){
+			int xPosTest = xPosStart+i;
+			int yPosTest = yPosStart-i;
+			if(board[yPosTest][xPosTest].getSymbol()=="  "){
+				possibleDestinations.add(xPosTest+","+yPosTest);
+			}else{
+				possibleDestinations.add(xPosTest+","+yPosTest);
+				i=8;
+			}
+		}
+		//nach links unten
+		for (int i=1;i<=7; i++){
+			int xPosTest = xPosStart-i;
+			int yPosTest = yPosStart+i;
+			if(board[yPosTest][xPosTest].getSymbol()=="  "){
+				possibleDestinations.add(xPosTest+","+yPosTest);
+			}else{
+				possibleDestinations.add(xPosTest+","+yPosTest);
+				i=8;
+			}
+		}
+		//nach links oben
+		for (int i=1;i<=7; i++){
+			int xPosTest = xPosStart-i;
+			int yPosTest = yPosStart-i;
+			if(board[yPosTest][xPosTest].getSymbol()=="  "){
+				possibleDestinations.add(xPosTest+","+yPosTest);
+			}else{
+				possibleDestinations.add(xPosTest+","+yPosTest);
+				i=8;
+			}
+		}
+		
+		//Prüfung
+		for(String item: possibleDestinations){
+			
+			if(item.equals(destPoint)){
+				return true;
+			}
+		}
+		possibleDestinations.clear();
+
+		
+		return false;
 	}
 	
 	public Bishop(String color, int count){
