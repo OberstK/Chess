@@ -103,7 +103,7 @@ public class GameMaster {
 	}
 	
 	public void bewegeFigur(Piece figur, String letter, int num){
-		
+		boolean test = false;
 		int xPosZiel = this.letterConverter(letter);
 		int yPosZiel = num-1; //weil Array bei 0 anfängt aber Schachbrett bei 1
 
@@ -112,28 +112,41 @@ public class GameMaster {
 		
 		if(figur instanceof Knight){
 			Knight knight = (Knight) figur;
-			if(knight.movePossible(xPosNow, yPosNow, xPosZiel, yPosZiel)== false){
-				System.out.println("Dieser Zug ist nicht gültig!");
-			}else{
-				if(this.pruefeZielLeer(xPosZiel, yPosZiel)){
-					figur.setPositionX(xPosZiel);
-					figur.setPositionY(yPosZiel);
-					this.loescheAltePos(yPosNow, xPosNow);
-					this.setzeFigur(figur);
-				}else if(this.pruefeZielGegner(xPosZiel, yPosZiel)){
-					this.schlageFigur(xPosZiel, yPosZiel);
-					figur.setPositionX(xPosZiel);
-					figur.setPositionY(yPosZiel);
-					this.loescheAltePos(yPosNow, xPosNow);
-					this.setzeFigur(figur);
-					
-				}else{
-					System.out.println("Zug nicht möglich. Ziel ist belegt");
-				}
+			if(knight.movePossible(xPosNow, yPosNow, xPosZiel, yPosZiel)){
+				test = true;
 			}
-
+		}else if(figur instanceof Queen){
+			Queen queen = (Queen) figur;
+			if(queen.movePossible(xPosNow, yPosNow, xPosZiel, yPosZiel, board)){
+				test = true;
+			}
+		}else if(figur instanceof Pawn){
+			test=true;
+		}else if(figur instanceof Bishop){
+			test=true;
+		}else if(figur instanceof Rock){
+			test=true;
+		}else if(figur instanceof King){
+			test=true;
 		}
-
+		if(test){
+			if(this.pruefeZielLeer(xPosZiel, yPosZiel)){
+				figur.setPositionX(xPosZiel);
+				figur.setPositionY(yPosZiel);
+				this.loescheAltePos(yPosNow, xPosNow);
+				this.setzeFigur(figur);
+			}else if(this.pruefeZielGegner(xPosZiel, yPosZiel)){
+				this.schlageFigur(xPosZiel, yPosZiel);
+				figur.setPositionX(xPosZiel);
+				figur.setPositionY(yPosZiel);
+				this.loescheAltePos(yPosNow, xPosNow);
+				this.setzeFigur(figur);		
+			}else{
+				System.out.println("Feld belegt!");
+			}
+		}else{
+			System.out.println("Dieser Zug ist nicht gültig!");
+		}
 
 	}
 	

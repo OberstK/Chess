@@ -18,6 +18,7 @@ public class Knight extends Piece{
 	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd) {
 		
 		ArrayList<String> possibleDestinations = new ArrayList<String>();
+		String destPoint = xPosEnd+","+yPosEnd;
 		
 		if(xPosStart+2<=7 && yPosStart+1<=7){
 			int x = xPosStart+2;
@@ -60,7 +61,7 @@ public class Knight extends Piece{
 			possibleDestinations.add(x+","+y);
 		}
 		
-		String destPoint = xPosEnd+","+yPosEnd;
+		
 
 		for(String item: possibleDestinations){
 			
