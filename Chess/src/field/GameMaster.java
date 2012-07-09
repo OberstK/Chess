@@ -89,9 +89,9 @@ public class GameMaster {
 		
 	}
 	
-	public boolean pruefeZielGegner(int xPos, int yPos){
+	public boolean pruefeZielGegner(boolean owner, int xPos, int yPos){
 		
-		if(board[yPos][xPos].getSymbol().contains("-")){
+		if(board[yPos][xPos].isOwner()!=owner){
 			return true;
 		}else{
 			return false;
@@ -105,7 +105,7 @@ public class GameMaster {
 	public void bewegeFigur(Piece figur, String letter, int num){
 		boolean test = false;
 		int xPosZiel = this.letterConverter(letter);
-		int yPosZiel = num-1; //weil Array bei 0 anfängt aber Schachbrett bei 1
+		int yPosZiel = num-1; //weil Array bei 0 anfängt, aber Schachbrett bei 1
 
 		int xPosNow = figur.getPositionX();
 		int yPosNow = figur.getPositionY();
@@ -121,7 +121,10 @@ public class GameMaster {
 				test = true;
 			}
 		}else if(figur instanceof Pawn){
-			test=true;
+			Pawn pawn = (Pawn) figur;
+			if(pawn.movePossible(xPosNow, yPosNow, xPosZiel, yPosZiel, board, pawn.isOwner())){
+				test = true;
+			}
 		}else if(figur instanceof Bishop){
 			test=true;
 		}else if(figur instanceof Rock){
@@ -135,7 +138,7 @@ public class GameMaster {
 				figur.setPositionY(yPosZiel);
 				this.loescheAltePos(yPosNow, xPosNow);
 				this.setzeFigur(figur);
-			}else if(this.pruefeZielGegner(xPosZiel, yPosZiel)){
+			}else if(this.pruefeZielGegner(figur.isOwner(), xPosZiel, yPosZiel)){
 				this.schlageFigur(xPosZiel, yPosZiel);
 				figur.setPositionX(xPosZiel);
 				figur.setPositionY(yPosZiel);

@@ -1,5 +1,7 @@
 package pieces;
 
+import java.util.ArrayList;
+
 public class Pawn extends Piece{
 
 	private int count;
@@ -12,6 +14,71 @@ public class Pawn extends Piece{
 		this.count = count;
 	}
 	
+	
+	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd, Piece[][] board, boolean owner){
+		boolean doubleMove = false;
+		ArrayList<String> possibleDestinations = new ArrayList<String>();
+		String destPoint = xPosEnd+","+yPosEnd;
+		
+		if((owner && yPosStart==6)||(owner==false && yPosStart==1)){
+			doubleMove = true;
+		}
+		
+		//Weiß
+		if(owner){
+			//Bewegung nach Vorne (1 und 2 Schritte)
+			if(board[yPosStart-1][xPosStart].getSymbol()=="  "){
+				possibleDestinations.add(xPosStart+","+(yPosStart-1));
+				if(doubleMove && board[yPosStart-2][xPosStart].getSymbol()=="  "){
+					possibleDestinations.add(xPosStart+","+(yPosStart-2));
+				}
+			}
+			//Schlagen nach rechts
+			if(board[yPosStart-1][xPosStart+1].getSymbol()!="  " && board[yPosStart+1][xPosStart+1].isOwner()!=owner){
+				possibleDestinations.add((xPosStart+1)+","+(yPosStart-1));
+			}
+			
+			//Schlagen nach links
+			if(board[yPosStart-1][xPosStart-1].getSymbol()!="  " && board[yPosStart+1][xPosStart+1].isOwner()!=owner){
+				possibleDestinations.add((xPosStart-1)+","+(yPosStart-1));
+			}
+			
+		}
+
+		//Schwarz
+		if(owner==false){
+			//Bewegung nach Vorne (1 und 2 Schritte)
+				
+				if(board[yPosStart+1][xPosStart].getSymbol()=="  "){
+					possibleDestinations.add(xPosStart+","+(yPosStart+1));
+					if(doubleMove && board[yPosStart+2][xPosStart].getSymbol()=="  "){
+						possibleDestinations.add(xPosStart+","+(yPosStart+2));
+					}
+				}
+			
+			//Schlagen nach rechts
+			if(board[yPosStart+1][xPosStart+1].getSymbol()!="  " && board[yPosStart+1][xPosStart+1].isOwner()!=owner){
+				possibleDestinations.add((xPosStart+1)+","+(yPosStart+1));
+			}
+			
+			//Schlagen nach links
+			if(board[yPosStart+1][xPosStart-1].getSymbol()!="  " && board[yPosStart+1][xPosStart+1].isOwner()!=owner){
+				possibleDestinations.add((xPosStart-1)+","+(yPosStart-1));
+			}
+		}
+		
+		//Prüfung
+		for(String item: possibleDestinations){
+			System.out.println(item);
+			if(item.equals(destPoint)){
+				return true;
+			}
+		}
+		
+		
+		
+		return false;
+	}
 	public Pawn(String color, int count) {
 		
 		if(color.equalsIgnoreCase("weiß")){

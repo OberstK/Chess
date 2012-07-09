@@ -15,6 +15,7 @@ public class Queen extends Piece{
 				if(board[yPosStart][xPosTest].getSymbol()=="  "){
 					possibleDestinations.add(xPosTest+","+yPosStart);
 				}else{
+					possibleDestinations.add(xPosTest+","+yPosStart);
 					i=8;
 				}
 			}
@@ -27,6 +28,7 @@ public class Queen extends Piece{
 				if(board[yPosStart][xPosTest].getSymbol()=="  "){
 					possibleDestinations.add(xPosTest+","+yPosStart);
 				}else{
+					possibleDestinations.add(xPosTest+","+yPosStart);
 					i=8;
 				}
 			}
@@ -39,6 +41,7 @@ public class Queen extends Piece{
 				if(board[yPosTest][xPosStart].getSymbol()=="  "){
 					possibleDestinations.add(xPosStart+","+yPosTest);
 				}else{
+					possibleDestinations.add(xPosStart+","+yPosTest);
 					i=8;
 				}
 			}
@@ -51,6 +54,7 @@ public class Queen extends Piece{
 				if(board[yPosTest][xPosStart].getSymbol()=="  "){
 					possibleDestinations.add(xPosStart+","+yPosTest);
 				}else{
+					possibleDestinations.add(xPosStart+","+yPosTest);
 					i=8;
 				}
 			}
@@ -64,6 +68,7 @@ public class Queen extends Piece{
 				if(board[yPosTest][xPosTest].getSymbol()=="  "){
 					possibleDestinations.add(xPosTest+","+yPosTest);
 				}else{
+					possibleDestinations.add(xPosTest+","+yPosTest);
 					i=8;
 				}
 			}
@@ -76,6 +81,7 @@ public class Queen extends Piece{
 				if(board[yPosTest][xPosTest].getSymbol()=="  "){
 					possibleDestinations.add(xPosTest+","+yPosTest);
 				}else{
+					possibleDestinations.add(xPosTest+","+yPosTest);
 					i=8;
 				}
 			}
@@ -88,6 +94,7 @@ public class Queen extends Piece{
 				if(board[yPosTest][xPosTest].getSymbol()=="  "){
 					possibleDestinations.add(xPosTest+","+yPosTest);
 				}else{
+					possibleDestinations.add(xPosTest+","+yPosTest);
 					i=8;
 				}
 			}
@@ -100,12 +107,12 @@ public class Queen extends Piece{
 				if(board[yPosTest][xPosTest].getSymbol()=="  "){
 					possibleDestinations.add(xPosTest+","+yPosTest);
 				}else{
+					possibleDestinations.add(xPosTest+","+yPosTest);
 					i=8;
 				}
 			}
 		}
-		
-		
+			
 		//Prüfung
 		for(String item: possibleDestinations){
 			System.out.println(item);
