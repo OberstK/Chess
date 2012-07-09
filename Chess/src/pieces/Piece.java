@@ -8,7 +8,6 @@ public class Piece {
 	private String symbol;
 	private String color;
 	
-	
 	public String getColor() {
 		return color;
 	}
@@ -40,4 +39,5 @@ public class Piece {
 		this.positionY = positionY;
 	}
 	
+
 }

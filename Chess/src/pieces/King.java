@@ -18,13 +18,13 @@ public class King extends Piece{
 		
 		if(this.isOwner()==true){
 			this.setColor("Weiﬂ");
-			this.setPositionX(5);
-			this.setPositionY(8);
+			this.setPositionX(4);
+			this.setPositionY(7);
 			
 		}else{
 			this.setColor("Schwarz");
-			this.setPositionX(5);
-			this.setPositionY(1);
+			this.setPositionX(4);
+			this.setPositionY(0);
 		}
 		
 

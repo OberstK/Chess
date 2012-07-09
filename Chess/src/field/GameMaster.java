@@ -4,32 +4,36 @@ import java.util.ArrayList;
 
 import pieces.*;
 
+
 public class GameMaster {
+	
+	private final Viewer viewer;
+	private final CommandListener listener;
 	
 	
 	public static Piece[][] board = new Piece[8][8];
-	
+	public static ArrayList<Piece> geschlagene= new ArrayList<Piece>();
 	
 	public int letterConverter(String letter){
 		int pos = 0;
 		
 		switch(letter){
 		
-		case "A": pos=0;
+		case "a": pos=0;
 			break;
-		case "B": pos=1;
+		case "b": pos=1;
 			break;
-		case "C": pos=2;
+		case "c": pos=2;
 			break;
-		case "D": pos=3;
+		case "d": pos=3;
 			break;
-		case "E": pos=4;
+		case "e": pos=4;
 			break;
-		case "F": pos=5;
+		case "f": pos=5;
 			break;
-		case "G": pos=6;
+		case "g": pos=6;
 			break;
-		case "H": pos=7;
+		case "h": pos=7;
 			break;
 			
 		default:System.out.println("Letter Conversion failed!");
@@ -48,9 +52,12 @@ public class GameMaster {
 	
 	public Piece getFigurOnBoard(String letter, int num){
 		
-
 		int spaltenPos = this.letterConverter(letter);
 		int zeilenPos = num-1;
+		
+		if(board[zeilenPos][spaltenPos].getSymbol()=="  "){
+			return null;
+		}
 		
 		return board[zeilenPos][spaltenPos];
 		
@@ -61,29 +68,73 @@ public class GameMaster {
 		int xPos = figur.getPositionX();
 		int yPos = figur.getPositionY();
 		
-		board[yPos-1][xPos-1]= figur;
+
+		board[yPos][xPos]= figur;
 		
 	}
 	
 	public void loescheAltePos(int zeile, int spalte){
 		
-		board[zeile-1][spalte-1]=null;
+		board[zeile][spalte]=null;
 		
+	}
+	
+	public boolean pruefeZielLeer(int xPos, int yPos){
+		
+		if(board[yPos][xPos].getSymbol()=="  "){
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
+	
+	public boolean pruefeZielGegner(int xPos, int yPos){
+		
+		if(board[yPos][xPos].getSymbol().contains("-")){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public void schlageFigur(int xPos, int yPos){
+		geschlagene.add(board[yPos][xPos]);
 	}
 	
 	public void bewegeFigur(Piece figur, String letter, int num){
 		
 		int xPosZiel = this.letterConverter(letter);
-		int yPosZiel = num-1;
+		int yPosZiel = num-1; //weil Array bei 0 anfängt aber Schachbrett bei 1
 
 		int xPosNow = figur.getPositionX();
 		int yPosNow = figur.getPositionY();
 		
-		figur.setPositionX(xPosZiel);
-		figur.setPositionY(yPosZiel);
+		if(figur instanceof Knight){
+			Knight knight = (Knight) figur;
+			if(knight.movePossible(xPosNow, yPosNow, xPosZiel, yPosZiel)== false){
+				System.out.println("Dieser Zug ist nicht gültig!");
+			}else{
+				if(this.pruefeZielLeer(xPosZiel, yPosZiel)){
+					figur.setPositionX(xPosZiel);
+					figur.setPositionY(yPosZiel);
+					this.loescheAltePos(yPosNow, xPosNow);
+					this.setzeFigur(figur);
+				}else if(this.pruefeZielGegner(xPosZiel, yPosZiel)){
+					this.schlageFigur(xPosZiel, yPosZiel);
+					figur.setPositionX(xPosZiel);
+					figur.setPositionY(yPosZiel);
+					this.loescheAltePos(yPosNow, xPosNow);
+					this.setzeFigur(figur);
+					
+				}else{
+					System.out.println("Zug nicht möglich. Ziel ist belegt");
+				}
+			}
 
-		this.loescheAltePos(yPosNow, xPosNow);
-		this.setzeFigur(figur);
+		}
+
+
 	}
 	
 	public Piece[][] aufstellungGenerieren(Piece[][] board){
@@ -98,7 +149,7 @@ public class GameMaster {
 		figuren.add(new Bishop("weiß", 2));
 		figuren.add(new Rock("weiß", 1));
 		figuren.add(new Rock("weiß", 2));
-		for(int i=1; i<9; i++){
+		for(int i=0; i<8; i++){
 			figuren.add(new Pawn("weiß", i));
 		}
 		
@@ -112,7 +163,7 @@ public class GameMaster {
 		figuren.add(new Bishop("schwarz", 2));
 		figuren.add(new Rock("schwarz", 1));
 		figuren.add(new Rock("schwarz", 2));
-		for(int i=1; i<9; i++){
+		for(int i=0; i<8; i++){
 			figuren.add(new Pawn("schwarz", i));
 		}
 		
@@ -124,14 +175,60 @@ public class GameMaster {
 		return board;
 	}
 	
+	public void listenUser(){
+
+		Command command = listener.scanInput();
+		
+		if(command == null){
+			System.out.println("Befehl nicht verstanden!");
+			
+			this.listenUser();
+		}else if(command.getCommand().equals(CommandConst.ZUG)){
+			
+			String[] values = command.getValues();
+			
+			if(this.getFigurOnBoard(values[0], Integer.parseInt(values[1]))==null){
+				System.out.println("Keine Figur an dieser Stelle!");
+				viewer.zeigeSpielBrett(board);
+				this.listenUser();
+			}else{
+			this.bewegeFigur(this.getFigurOnBoard(values[0], Integer.parseInt(values[1])), values[2], Integer.parseInt(values[3]));
+			
+			viewer.zeigeSpielBrett(board);
+			this.listenUser();
+			}
+		}else if(command.getCommand().equals(CommandConst.ABL)){
+			System.out.println("Geschlagene Figuren:");
+			for(Piece item: geschlagene){
+				System.out.print(item.getSymbol()+", ");
+			}
+			
+			this.listenUser();
+			
+		}else if(command.getCommand().equals(CommandConst.EXIT)){
+			
+			System.out.println("Spiel beendet");
+			
+		}else{
+			System.out.println("Fehler!");
+		}
+	}
+	
+	public GameMaster(){
+		viewer = new Viewer();
+		listener = new CommandListener();
+	}
+	
 	public static void main(String[] args) {
 		
 		GameMaster chef = new GameMaster();
 		Viewer view = new Viewer();
+		
 		board = chef.aufstellungGenerieren(board);
 		view.zeigeSpielBrett(board);
-		chef.makeMove("B", 8, "D", 4);
-		view.zeigeSpielBrett(board);
+		chef.listenUser();
+		
+		
 	}
 
 }

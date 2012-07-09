@@ -23,20 +23,20 @@ public class Bishop extends Piece{
 		}
 		
 		if(count==1){
-			this.setPositionX(3);			
+			this.setPositionX(2);			
 		}else if(count==2){
-			this.setPositionX(6);
+			this.setPositionX(5);
 		}else{
 			System.out.println("Anzahl undefiniert!");
 		}
 		
 		if(this.isOwner()==true){
 			this.setColor("Weiﬂ");
-			this.setPositionY(8);
+			this.setPositionY(7);
 			
 		}else{
 			this.setColor("Schwarz");
-			this.setPositionY(1);
+			this.setPositionY(0);
 		}
 		
 		

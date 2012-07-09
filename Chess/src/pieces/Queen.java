@@ -17,13 +17,13 @@ public class Queen extends Piece{
 
 		if(this.isOwner()==true){
 			this.setColor("Weiﬂ");
-			this.setPositionX(4);
-			this.setPositionY(8);
+			this.setPositionX(3);
+			this.setPositionY(7);
 			
 		}else{
 			this.setColor("Schwarz");
-			this.setPositionX(4);
-			this.setPositionY(1);
+			this.setPositionX(3);
+			this.setPositionY(0);
 		}
 		
 	}

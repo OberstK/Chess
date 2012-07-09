@@ -25,20 +25,20 @@ public class Rock extends Piece{
 		}
 		
 		if(count==1){
-			this.setPositionX(1);			
+			this.setPositionX(0);			
 		}else if(count==2){
-			this.setPositionX(8);
+			this.setPositionX(7);
 		}else{
 			System.out.println("Anzahl undefiniert!");
 		}
 		
 		if(this.isOwner()==true){
 			this.setColor("Weiﬂ");
-			this.setPositionY(8);
+			this.setPositionY(7);
 			
 		}else{
 			this.setColor("Schwarz");
-			this.setPositionY(1);
+			this.setPositionY(0);
 		}
 		
 		

@@ -25,6 +25,8 @@ public class Pawn extends Piece{
 		}
 		
 		switch (count) {
+		case 0: this.setPositionX(count);
+			break;
 		case 1: this.setPositionX(count);
 			break;
 		case 2: this.setPositionX(count);
@@ -39,10 +41,9 @@ public class Pawn extends Piece{
 			break;
 		case 7: this.setPositionX(count);
 			break;
-		case 8: this.setPositionX(count);
-			break;
 
-		default: System.out.println("Anzahl undefiniert!");
+
+		default: System.out.println("Anzahl Bauern undefiniert!");
 			break;
 		}
 		
@@ -50,11 +51,11 @@ public class Pawn extends Piece{
 		
 		if(this.isOwner()==true){
 			this.setColor("Weiﬂ");
-			this.setPositionY(7);
+			this.setPositionY(6);
 			
 		}else{
 			this.setColor("Schwarz");
-			this.setPositionY(2);
+			this.setPositionY(1);
 		}
 		
 	}

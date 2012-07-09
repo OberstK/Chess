@@ -1,5 +1,7 @@
 package pieces;
 
+import java.util.ArrayList;
+
 public class Knight extends Piece{
 	private int count;
 	
@@ -9,6 +11,66 @@ public class Knight extends Piece{
 
 	public void setCount(int count) {
 		this.count = count;
+	}
+	
+	
+
+	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd) {
+		
+		ArrayList<String> possibleDestinations = new ArrayList<String>();
+		
+		if(xPosStart+2<=7 && yPosStart+1<=7){
+			int x = xPosStart+2;
+			int y = yPosStart+1;
+			possibleDestinations.add(x+","+y);
+		}
+		if(xPosStart+2<=7 && yPosStart-1>=0){
+			int x = xPosStart+2;
+			int y = yPosStart-1;
+			possibleDestinations.add(x+","+y);
+		}
+		if(xPosStart-2>=0 && yPosStart+1<=7){
+			int x = xPosStart-2;
+			int y = yPosStart+1;
+			possibleDestinations.add(x+","+y);
+		}
+		if(xPosStart-2>=0 && yPosStart-1>=0){
+			int x = xPosStart-2;
+			int y = yPosStart-1;
+			possibleDestinations.add(x+","+y);
+		}
+		if(yPosStart+2<=7 && xPosStart+1<=7){
+			int y = yPosStart+2;
+			int x = xPosStart+1;
+			possibleDestinations.add(x+","+y);
+		}
+		if(yPosStart+2<=7 && xPosStart-1>=0){
+			int y = yPosStart+2;
+			int x = xPosStart-1;
+			possibleDestinations.add(x+","+y);
+		}
+		if(yPosStart-2>=0 && xPosStart+1<=7){
+			int y = yPosStart-2;
+			int x = xPosStart+1;
+			possibleDestinations.add(x+","+y);
+		}
+		if(yPosStart-2>=0 && xPosStart-1>=0){
+			int y = yPosStart-2;
+			int x = xPosStart-1;
+			possibleDestinations.add(x+","+y);
+		}
+		
+		String destPoint = xPosEnd+","+yPosEnd;
+
+		for(String item: possibleDestinations){
+			
+			if(item.equals(destPoint)){
+				return true;
+			}
+		}
+		possibleDestinations.clear();
+
+		return false;
 	}
 
 	public Knight(String color, int count){
@@ -23,20 +85,20 @@ public class Knight extends Piece{
 		}
 		
 		if(count==1){
-			this.setPositionX(2);			
+			this.setPositionX(1);			
 		}else if(count==2){
-			this.setPositionX(7);
+			this.setPositionX(6);
 		}else{
 			System.out.println("Anzahl undefiniert!");
 		}
 		
 		if(this.isOwner()==true){
 			this.setColor("Weiﬂ");
-			this.setPositionY(8);
+			this.setPositionY(7);
 			
 		}else{
 			this.setColor("Schwarz");
-			this.setPositionY(1);
+			this.setPositionY(0);
 		}
 		
 		
