@@ -1,5 +1,9 @@
 package controller;
 
+import pieces.King;
+import pieces.Piece;
+import pieces.Rock;
+
 
 public class Analyser {
 	
@@ -31,6 +35,90 @@ public class Analyser {
 		
 		return pos;
 		
+	}
+	
+	public boolean rochadeShortPossible(boolean owner, Piece[][] board){
+		//Weiß
+		if(owner){
+			if(board[7][4] instanceof King){
+				System.out.println("König gefunden");
+				King king = (King) board[7][4];
+				if(king.isRochade()){
+					System.out.println("König darf rochieren");
+					if(board[7][7] instanceof Rock){
+						System.out.println("Turm gefunden");
+						Rock rock = (Rock) board[7][0];
+						if(rock.isRochade()){
+							System.out.println("Turm darf rochieren");
+							if(board[7][6].getSymbol() == "  " && board[7][5].getSymbol() == "  "){
+								return true;
+							}
+						}
+						
+					}
+				}
+			}
+		}
+		//Schwarz
+		else{
+			if(board[0][4] instanceof King){
+				King king = (King) board[0][4];
+				if(king.isRochade()){
+					if(board[0][7] instanceof Rock){
+						Rock rock = (Rock) board[0][0];
+						if(rock.isRochade()){
+							if(board[0][6].getSymbol() == "  " && board[0][5].getSymbol() == "  "){
+								return true;
+							}
+						}
+						
+					}
+				}
+			}
+		}
+			
+		return false;
+	}
+	
+	public boolean rochadeLongPossible(boolean owner, Piece[][] board){
+		
+		
+		//Weiß
+		if(owner){
+			if(board[7][4] instanceof King){
+				King king = (King) board[7][4];
+				if(king.isRochade()){
+					if(board[7][0] instanceof Rock){
+						Rock rock = (Rock) board[7][0];
+						if(rock.isRochade()){
+							if(board[7][1].getSymbol() == "  " && board[7][2].getSymbol() == "  " && board[7][3].getSymbol() == "  "){
+								return true;
+							}
+						}
+						
+					}
+				}
+			}
+		}
+		//Schwarz
+		else{
+			if(board[0][4] instanceof King){
+				King king = (King) board[0][4];
+				if(king.isRochade()){
+					if(board[0][0] instanceof Rock){
+						Rock rock = (Rock) board[0][0];
+						if(rock.isRochade()){
+							if(board[0][1].getSymbol() == "  " && board[0][2].getSymbol() == "  " && board[0][3].getSymbol() == "  "){
+								return true;
+							}
+						}
+						
+					}
+				}
+			}
+		}
+				
+		return false;
 	}
 	
 

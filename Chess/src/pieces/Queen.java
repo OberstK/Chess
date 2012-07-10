@@ -115,7 +115,6 @@ public class Queen extends Piece{
 			
 		//Prüfung
 		for(String item: possibleDestinations){
-			System.out.println(item);
 			if(item.equals(destPoint)){
 				return true;
 			}

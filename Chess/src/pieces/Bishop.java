@@ -73,7 +73,6 @@ public class Bishop extends Piece{
 		
 		//Prüfung
 		for(String item: possibleDestinations){
-			
 			if(item.equals(destPoint)){
 				return true;
 			}

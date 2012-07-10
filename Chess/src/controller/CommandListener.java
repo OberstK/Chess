@@ -12,6 +12,10 @@ public class CommandListener {
 		String[] values = new String[4];
 		
         int indexDP = input.indexOf(":");
+        if(indexDP == -1){
+        	return null;
+        }
+        
         String data = input.substring(indexDP + 1);
 
         String[] parts = data.split(" auf ");
@@ -31,6 +35,7 @@ public class CommandListener {
 		System.out.println(values[3]);
 		*/
 
+
 		return values;
 	}
 
@@ -44,10 +49,14 @@ public class CommandListener {
 	    Command command = new Command();
 
 	    if (input.contains("zug")) {
-	    	
-	    	String[] values = this.zugConverter(input);
-	    	command.setCommand(CommandConst.ZUG);
-	    	command.setValues(values);
+	    	if(this.zugConverter(input)==null){
+	    		command.setCommand(CommandConst.ERR);
+
+	    	}else{
+		    	String[] values = this.zugConverter(input);
+		    	command.setCommand(CommandConst.ZUG);
+		    	command.setValues(values);
+	    	}
 
 	        return command;
 
@@ -62,6 +71,25 @@ public class CommandListener {
 	    	command.setCommand(CommandConst.ABL);
 	    	
 	    	return command;
+	    	
+	    } else if(input.contains("neues spiel")){
+	    	
+	    	command.setCommand(CommandConst.NEW);
+	    	
+	    	return command;
+	    	
+	    } else if(input.contains("rochade kurz")){
+	    	
+	    	command.setCommand(CommandConst.RS);
+	    	
+	    	return command;
+	    	
+	    }else if(input.contains("rochade lang")){
+	    	
+	    	command.setCommand(CommandConst.RL);
+	    	
+	    	return command;
+	    	
 	    } else{
 	    	
 	    	System.out.println("Input nicht erkannt!");

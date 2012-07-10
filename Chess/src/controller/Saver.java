@@ -8,11 +8,12 @@ import java.util.ArrayList;
 
 
 import pieces.Piece;
+import players.Player;
 
 
 public class Saver {
 
-	public void saveToXMl(Piece[][] board){
+	public void saveBoardToXML(Piece[][] board){
 		
 		ArrayList<Piece> saveList = new ArrayList<Piece>();
 
@@ -23,8 +24,22 @@ public class Saver {
 		}
 		
 	    try {
-	        XMLEncoder en = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("Save.xml")));
+	        XMLEncoder en = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("Board.xml")));
 	        for (Object o : saveList) {
+	            en.writeObject(o);
+	        }
+	        en.close();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	}
+	
+public void savePlayersToXML(Player[] spieler){
+
+	    try {
+	        XMLEncoder en = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("Players.xml")));
+	        for (Object o : spieler) {
 	            en.writeObject(o);
 	        }
 	        en.close();
@@ -35,14 +50,14 @@ public class Saver {
 	}
 
 
-	public Piece[][] loadFromXL (){
+	public Piece[][] loadBoardFromXML (){
 		
 	    ArrayList<Piece> loadList = new ArrayList<Piece>();
 	    boolean objectsLeft = true;
 	    Piece[][] board = new Piece[8][8];
 	    
 	    try {
-	        XMLDecoder de = new XMLDecoder(new BufferedInputStream(new FileInputStream("Save.xml")));
+	        XMLDecoder de = new XMLDecoder(new BufferedInputStream(new FileInputStream("Board.xml")));
 	        while (objectsLeft) {
 	        	loadList.add((Piece) de.readObject());
 	        }
@@ -62,5 +77,29 @@ public class Saver {
 	    }
 
 	    return board;
+	}
+	
+	public Player[] loadPlayersFromXML (){
+		
+	    Player[] spieler = new Player[2];
+	    boolean objectsLeft = true;
+	    int i=0;
+	    
+	    try {
+	        XMLDecoder de = new XMLDecoder(new BufferedInputStream(new FileInputStream("Players.xml")));
+	        while (objectsLeft) {
+	        	spieler[i] = (Player) de.readObject();
+	        	System.out.println("Spieler gefunden");
+	        	i++;
+	        }
+	        de.close();
+	    } catch (java.lang.ArrayIndexOutOfBoundsException e){
+	        objectsLeft = false;
+	    } catch (FileNotFoundException e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	  
+	    return spieler;
 	}
 }

@@ -13,8 +13,6 @@ public class Knight extends Piece{
 		this.count = count;
 	}
 	
-	
-
 	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd) {
 		
 		ArrayList<String> possibleDestinations = new ArrayList<String>();
@@ -64,7 +62,6 @@ public class Knight extends Piece{
 		
 
 		for(String item: possibleDestinations){
-			
 			if(item.equals(destPoint)){
 				return true;
 			}

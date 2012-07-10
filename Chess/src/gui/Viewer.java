@@ -16,15 +16,7 @@ public class Viewer {
 			
 			System.out.print(i+1+" ");
 			for(int j=0;j<8; j++){
-				if(spielBrett[i][j]==null){
-					Piece nix = new Piece();
-					nix.setSymbol("  ");
-					nix.setPositionY(i);
-					nix.setPositionX(j);
-					spielBrett[i][j]=nix;
-				}
 				System.out.print("| "+spielBrett[i][j].getSymbol()+" |");
-				
 			}
 			System.out.print("\n");
 

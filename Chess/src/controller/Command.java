@@ -24,6 +24,6 @@ public class Command {
 
 enum CommandConst{
 	
-	      ZUG, EXIT, ABL
+	      ZUG, EXIT, ABL, RL, RS, NEW, ERR
 }
  

@@ -5,6 +5,15 @@ import java.util.ArrayList;
 public class Rock extends Piece{
 	
 	private int count;
+	private boolean rochade;
+
+	public boolean isRochade() {
+		return rochade;
+	}
+
+	public void setRochade(boolean rochade) {
+		this.rochade = rochade;
+	}
 
 	public int getCount() {
 		return count;
@@ -73,7 +82,6 @@ public class Rock extends Piece{
 		
 		//Prüfung
 		for(String item: possibleDestinations){
-			
 			if(item.equals(destPoint)){
 				return true;
 			}
@@ -84,6 +92,7 @@ public class Rock extends Piece{
 	}
 
 	public Rock(String color, int count){
+		this.setRochade(true);
 		
 		if(color.equalsIgnoreCase("weiß")){
 			this.setOwner(true);

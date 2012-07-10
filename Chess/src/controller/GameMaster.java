@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import pieces.*;
-
+import players.Player;
 
 public class GameMaster {
 	
@@ -18,16 +18,25 @@ public class GameMaster {
 	
 	
 	public static Piece[][] board = new Piece[8][8];
+	public static Player[] spieler = new Player[2];
 	public static ArrayList<Piece> geschlagene= new ArrayList<Piece>();
 	
 	
 	//Save and Load
 	public void saveBoard(){
-		saver.saveToXMl(board);
+		saver.saveBoardToXML(board);
 	}
 	
 	public Piece[][] loadBoard(){
-		return saver.loadFromXL();
+		return saver.loadBoardFromXML();
+	}
+	
+	public void savePlayers(){
+		saver.savePlayersToXML(spieler);
+	}
+	
+	public Player[] loadPlayers(){
+		return saver.loadPlayersFromXML();
 	}
 	
 	
@@ -39,7 +48,8 @@ public class GameMaster {
 		geschlagene.add(board[yPos][xPos]);
 	}
 	
-	public void bewegeFigur(Piece figur, int letter, int num){
+	public boolean bewegeFigur(Piece figur, int letter, int num){
+		boolean success= false;
 		boolean test = false;
 		int xPosEnd = letter;
 		int yPosEnd = num-1; //weil Array bei 0 anfängt, aber Schachbrett bei 1
@@ -84,17 +94,25 @@ public class GameMaster {
 				figur.setPositionY(yPosEnd);
 				control.loescheAltePos(yPosStart, xPosStart, board);
 				control.setzeFigur(figur, board);
+				success=true;
+				return success;
 			}else if(control.pruefeZielGegner(figur.isOwner(), xPosEnd, yPosEnd, board)){
 				this.schlageFigur(xPosEnd, yPosEnd);
 				figur.setPositionX(xPosEnd);
 				figur.setPositionY(yPosEnd);
 				control.loescheAltePos(yPosStart, xPosStart, board);
 				control.setzeFigur(figur, board);		
+				success=true;
+				return success;
 			}else{
 				System.out.println("Feld belegt!");
+				success=false;
+				return success;
 			}
 		}else{
 			System.out.println("Dieser Zug ist nicht gültig!");
+			success=false;
+			return success;
 		}
 	}
 	
@@ -132,36 +150,67 @@ public class GameMaster {
 			control.setzeFigur(figur, board);
 		}
 		
+		//Leere Felder füllen
+		
+		for(int i=2; i<=5; i++){
+			for(int j=0; j<=7;j++){
+				board[i][j] = control.erzeugeLeeresFeld(j, i);
+			}
+		}
+		
 		return board;
 	}
 	
 	public void listenUser(){
 
 		Command command = listener.scanInput();
+		//Wer ist dran?
+		boolean ownerOnTurn = true;
+		for(int i=0; i<=1; i++){
+			if(spieler[i].isOnTurn()){
+				ownerOnTurn = spieler[i].isOwner();
+			}
+		}
 		
+		//Befehlsinterpreter
 		if(command == null){
 			System.out.println("Befehl nicht verstanden!");
 			this.listenUser();
 			
-			//Zug-Befehl
-		}else if(command.getCommand().equals(CommandConst.ZUG)){
 			
+		}else if(command.getCommand().equals(CommandConst.ZUG)){
+			//Zug-Befehl
 			String[] values = command.getValues();
+			
 			
 			if(control.getFigurOnBoard(analyse.letterConverter(values[0]), Integer.parseInt(values[1]), board)==null){
 				System.out.println("Keine Figur an dieser Stelle!");
 				viewer.zeigeSpielBrett(board);
 				this.listenUser();
+			}else if(control.getFigurOnBoard(analyse.letterConverter(values[0]), Integer.parseInt(values[1]), board).isOwner()!=ownerOnTurn){
+				System.out.println("Das ist keine von deinen Figuren!");
+				viewer.zeigeSpielBrett(board);
+				this.listenUser();
 			}else{
-			this.bewegeFigur(control.getFigurOnBoard(analyse.letterConverter(values[0]), Integer.parseInt(values[1]), board), analyse.letterConverter(values[2]), Integer.parseInt(values[3]));
-			
-			viewer.zeigeSpielBrett(board);
-			
-			this.listenUser();
+				if(this.bewegeFigur(control.getFigurOnBoard(analyse.letterConverter(values[0]), Integer.parseInt(values[1]), board), analyse.letterConverter(values[2]), Integer.parseInt(values[3]))){
+					//Spieler wechseln
+					for(int i=0; i<=1; i++){
+						spieler[i].setOnTurn(!(spieler[i].isOnTurn()));
+					}
+					if(this.weissAmZug()){
+						System.out.println(spieler[0].getName()+" - "+spieler[0].getColor()+" ist am Zug");
+					}else{
+						System.out.println(spieler[1].getName()+" - "+spieler[1].getColor()+" ist am Zug");
+					}
+				}
+
+				viewer.zeigeSpielBrett(board);
+				this.listenUser();
 			}
 			
-			//Ablage-Befehl
+			
 		}else if(command.getCommand().equals(CommandConst.ABL)){
+			//Ablage-Befehl
 			System.out.println("Geschlagene Figuren:");
 			for(Piece item: geschlagene){
 				System.out.print(item.getSymbol()+", ");
@@ -170,15 +219,88 @@ public class GameMaster {
 			
 			this.listenUser();
 			
-			//Exit-Befehl
-		}else if(command.getCommand().equals(CommandConst.EXIT)){
 			
+		}else if(command.getCommand().equals(CommandConst.RS)){
+			//Rochade kurz
+			if(analyse.rochadeShortPossible(ownerOnTurn, board)){
+				//Weiss
+				if(ownerOnTurn = true){
+					Rock rock = (Rock) control.getFigurOnBoard(7, 8, board);
+					King king = (King) control.getFigurOnBoard(4, 8, board);
+					king.setPositionX(6);
+					rock.setPositionX(5);
+				}else{
+					Rock rock = (Rock) control.getFigurOnBoard(7, 1, board);
+					King king = (King) control.getFigurOnBoard(4, 1, board);
+					king.setPositionX(6);
+					rock.setPositionX(5);
+				}
+			}else{
+				System.out.println("kurze Rochade nicht möglich. Figuren im Weg oder an falscher Position!");
+			}
+			this.listenUser();
+	
+		}else if(command.getCommand().equals(CommandConst.RL)){
+			//Rochade Lang
+			
+
+			
+		}else if(command.getCommand().equals(CommandConst.EXIT)){
+			//Exit-Befehl
+			this.savePlayers();
 			this.saveBoard();
 			System.out.println("Spiel gesichert und beendet");
 			
+			
+		}else if(command.getCommand().equals(CommandConst.NEW)){
+			//New Game Befehl
+			this.resetBoard();
+			this.startGame();
+			System.out.println("Neues Spiel gestartet");
+			this.listenUser();
+			
+		}else if(command.getCommand().equals(CommandConst.ERR)){
+			//Error-Befehl
+			System.out.println("Fehler! Befehlsformat einhalten");
+			this.listenUser();
 		}else{
+			//Fehlerbehandlung
 			System.out.println("Fehler!");
 		}
+	}
+	
+	public boolean weissAmZug(){
+		
+		if(spieler[0].isOnTurn()){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public void startGame(){
+
+		//Spieler 1
+		Player player1 = new Player();
+		player1.setName("Spieler 1");
+		player1.setColor("Weiss");
+		player1.setOnTurn(true);
+		player1.setOwner(true);
+		
+		//Spieler 2
+		Player player2 = new Player();
+		player2.setName("Spieler 2");
+		player2.setColor("Schwarz");
+		player2.setOnTurn(false);
+		player2.setOwner(false);
+
+		spieler[0] = player1;
+		spieler[1] = player2;
+
+	}
+	
+	public void resetBoard(){
+		this.aufstellungGenerieren();
 	}
 	
 	public GameMaster(){
@@ -194,13 +316,23 @@ public class GameMaster {
 		GameMaster chef = new GameMaster();
 		Viewer view = new Viewer();
 		
-        if (new File("Save.xml").exists()) {
+        if (new File("Board.xml").exists() && new File("Players.xml").exists()) {
+        	System.out.println("Gespeichertes Spiel gefunden. Lade...");
         	board = chef.loadBoard();
+        	spieler = chef.loadPlayers();
         	view.zeigeSpielBrett(board);
         } else {
-        	view.zeigeSpielBrett(chef.aufstellungGenerieren());
+        	System.out.println("Kein gespeichertes Spiel gefunden. Beginne Neues...");
+        	chef.startGame();
+        	chef.resetBoard();
+        	view.zeigeSpielBrett(board);
         }
 		
+        if(spieler[0].isOnTurn()){
+        	System.out.println("Spieler 1 - Weiß ist am Zug");
+        }else{
+        	System.out.println("Spieler 2 - Schwarz ist am Zug");
+        }
 		chef.listenUser();
 			
 	}

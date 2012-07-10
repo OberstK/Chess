@@ -4,6 +4,18 @@ import java.util.ArrayList;
 
 public class King extends Piece{
 	
+	private boolean rochade;
+	
+	public boolean isRochade() {
+		return rochade;
+	}
+
+	public void setRochade(boolean rochade) {
+		this.rochade = rochade;
+	}
+
+
+	
 	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd){
 		
 		ArrayList<String> possibleDestinations = new ArrayList<String>();
@@ -68,7 +80,6 @@ public class King extends Piece{
 		
 		//Prüfung
 		for(String item: possibleDestinations){
-			
 			if(item.equals(destPoint)){
 				return true;
 			}
@@ -79,6 +90,7 @@ public class King extends Piece{
 	}
 	
 	public King(String color){
+		this.setRochade(true);
 		
 		if(color.equalsIgnoreCase("weiß")){
 			this.setOwner(true);

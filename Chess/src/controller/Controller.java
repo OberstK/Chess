@@ -26,8 +26,8 @@ public class Controller {
 	
 	public void loescheAltePos(int zeile, int spalte, Piece[][] board){
 		
-		board[zeile][spalte]=null;
-		
+		board[zeile][spalte] = this.erzeugeLeeresFeld(spalte, zeile);
+	
 	}
 	
 	public boolean pruefeZielLeer(int xPos, int yPos, Piece[][] board){
@@ -47,5 +47,13 @@ public class Controller {
 		}else{
 			return false;
 		}
+	}
+	
+	public Piece erzeugeLeeresFeld(int x, int y){
+		Piece nix = new Piece();
+		nix.setSymbol("  ");
+		nix.setPositionY(y);
+		nix.setPositionX(x);
+		return nix;
 	}
 }
