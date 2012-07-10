@@ -39,5 +39,9 @@ public class Piece {
 		this.positionY = positionY;
 	}
 	
+	
+	public Piece(){
+		
+	}
 
 }

@@ -1,5 +1,8 @@
-package field;
+package controller;
 
+import gui.Viewer;
+
+import java.io.File;
 import java.util.ArrayList;
 
 import pieces.*;
@@ -9,153 +12,95 @@ public class GameMaster {
 	
 	private final Viewer viewer;
 	private final CommandListener listener;
+	private final Saver saver;
+	private final Analyser analyse;
+	private final Controller control;
 	
 	
 	public static Piece[][] board = new Piece[8][8];
 	public static ArrayList<Piece> geschlagene= new ArrayList<Piece>();
 	
-	public int letterConverter(String letter){
-		int pos = 0;
-		
-		switch(letter){
-		
-		case "a": pos=0;
-			break;
-		case "b": pos=1;
-			break;
-		case "c": pos=2;
-			break;
-		case "d": pos=3;
-			break;
-		case "e": pos=4;
-			break;
-		case "f": pos=5;
-			break;
-		case "g": pos=6;
-			break;
-		case "h": pos=7;
-			break;
-			
-		default:System.out.println("Letter Conversion failed!");
-			break;
-		}
-		
-		return pos;
-		
+	
+	//Save and Load
+	public void saveBoard(){
+		saver.saveToXMl(board);
 	}
+	
+	public Piece[][] loadBoard(){
+		return saver.loadFromXL();
+	}
+	
 	
 	public void makeMove(String sLetter, int sNum, String zLetter, int zNum){
-		
-		this.bewegeFigur(this.getFigurOnBoard(sLetter, sNum), zLetter, zNum);
-		
-	}
-	
-	public Piece getFigurOnBoard(String letter, int num){
-		
-		int spaltenPos = this.letterConverter(letter);
-		int zeilenPos = num-1;
-		
-		if(board[zeilenPos][spaltenPos].getSymbol()=="  "){
-			return null;
-		}
-		
-		return board[zeilenPos][spaltenPos];
-		
-	}
-
-	
-	public void setzeFigur(Piece figur){
-		int xPos = figur.getPositionX();
-		int yPos = figur.getPositionY();
-		
-
-		board[yPos][xPos]= figur;
-		
-	}
-	
-	public void loescheAltePos(int zeile, int spalte){
-		
-		board[zeile][spalte]=null;
-		
-	}
-	
-	public boolean pruefeZielLeer(int xPos, int yPos){
-		
-		if(board[yPos][xPos].getSymbol()=="  "){
-			return true;
-		}else{
-			return false;
-		}
-		
-	}
-	
-	public boolean pruefeZielGegner(boolean owner, int xPos, int yPos){
-		
-		if(board[yPos][xPos].isOwner()!=owner){
-			return true;
-		}else{
-			return false;
-		}
+		this.bewegeFigur(control.getFigurOnBoard(analyse.letterConverter(sLetter), sNum, board), analyse.letterConverter(zLetter), zNum);
 	}
 	
 	public void schlageFigur(int xPos, int yPos){
 		geschlagene.add(board[yPos][xPos]);
 	}
 	
-	public void bewegeFigur(Piece figur, String letter, int num){
+	public void bewegeFigur(Piece figur, int letter, int num){
 		boolean test = false;
-		int xPosZiel = this.letterConverter(letter);
-		int yPosZiel = num-1; //weil Array bei 0 anf‰ngt, aber Schachbrett bei 1
+		int xPosEnd = letter;
+		int yPosEnd = num-1; //weil Array bei 0 anf‰ngt, aber Schachbrett bei 1
 
-		int xPosNow = figur.getPositionX();
-		int yPosNow = figur.getPositionY();
+		int xPosStart = figur.getPositionX();
+		int yPosStart = figur.getPositionY();
 		
 		if(figur instanceof Knight){
 			Knight knight = (Knight) figur;
-			if(knight.movePossible(xPosNow, yPosNow, xPosZiel, yPosZiel)){
+			if(knight.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd)){
 				test = true;
 			}
 		}else if(figur instanceof Queen){
 			Queen queen = (Queen) figur;
-			if(queen.movePossible(xPosNow, yPosNow, xPosZiel, yPosZiel, board)){
+			if(queen.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board)){
 				test = true;
 			}
 		}else if(figur instanceof Pawn){
 			Pawn pawn = (Pawn) figur;
-			if(pawn.movePossible(xPosNow, yPosNow, xPosZiel, yPosZiel, board, pawn.isOwner())){
+			if(pawn.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board, pawn.isOwner())){
 				test = true;
 			}
 		}else if(figur instanceof Bishop){
-			test=true;
+			Bishop bishop = (Bishop) figur;
+			if(bishop.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board)){
+				test = true;
+			}
 		}else if(figur instanceof Rock){
-			test=true;
+			Rock rock = (Rock) figur;
+			if(rock.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board)){
+				test=true;
+			}
 		}else if(figur instanceof King){
-			test=true;
+			King king = (King) figur;
+			if(king.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd)){
+				test=true;
+			}
 		}
 		if(test){
-			if(this.pruefeZielLeer(xPosZiel, yPosZiel)){
-				figur.setPositionX(xPosZiel);
-				figur.setPositionY(yPosZiel);
-				this.loescheAltePos(yPosNow, xPosNow);
-				this.setzeFigur(figur);
-			}else if(this.pruefeZielGegner(figur.isOwner(), xPosZiel, yPosZiel)){
-				this.schlageFigur(xPosZiel, yPosZiel);
-				figur.setPositionX(xPosZiel);
-				figur.setPositionY(yPosZiel);
-				this.loescheAltePos(yPosNow, xPosNow);
-				this.setzeFigur(figur);		
+			if(control.pruefeZielLeer(xPosEnd, yPosEnd, board)){
+				figur.setPositionX(xPosEnd);
+				figur.setPositionY(yPosEnd);
+				control.loescheAltePos(yPosStart, xPosStart, board);
+				control.setzeFigur(figur, board);
+			}else if(control.pruefeZielGegner(figur.isOwner(), xPosEnd, yPosEnd, board)){
+				this.schlageFigur(xPosEnd, yPosEnd);
+				figur.setPositionX(xPosEnd);
+				figur.setPositionY(yPosEnd);
+				control.loescheAltePos(yPosStart, xPosStart, board);
+				control.setzeFigur(figur, board);		
 			}else{
 				System.out.println("Feld belegt!");
 			}
 		}else{
 			System.out.println("Dieser Zug ist nicht g¸ltig!");
 		}
-
 	}
 	
-	public Piece[][] aufstellungGenerieren(Piece[][] board){
-		
+	public Piece[][] aufstellungGenerieren(){
 		ArrayList<Piece> figuren = new ArrayList<Piece>();
+		
 		//Weiﬂe Figuren
 		figuren.add(new King("weiﬂ"));
 		figuren.add(new Queen("weiﬂ"));
@@ -169,7 +114,6 @@ public class GameMaster {
 			figuren.add(new Pawn("weiﬂ", i));
 		}
 		
-
 		//Schwarze Figuren
 		figuren.add(new King("schwarz"));
 		figuren.add(new Queen("schwarz"));
@@ -185,7 +129,7 @@ public class GameMaster {
 		
 		//Setzen
 		for(Piece figur: figuren){
-			this.setzeFigur(figur);
+			control.setzeFigur(figur, board);
 		}
 		
 		return board;
@@ -197,22 +141,26 @@ public class GameMaster {
 		
 		if(command == null){
 			System.out.println("Befehl nicht verstanden!");
-			
 			this.listenUser();
+			
+			//Zug-Befehl
 		}else if(command.getCommand().equals(CommandConst.ZUG)){
 			
 			String[] values = command.getValues();
 			
-			if(this.getFigurOnBoard(values[0], Integer.parseInt(values[1]))==null){
+			if(control.getFigurOnBoard(analyse.letterConverter(values[0]), Integer.parseInt(values[1]), board)==null){
 				System.out.println("Keine Figur an dieser Stelle!");
 				viewer.zeigeSpielBrett(board);
 				this.listenUser();
 			}else{
-			this.bewegeFigur(this.getFigurOnBoard(values[0], Integer.parseInt(values[1])), values[2], Integer.parseInt(values[3]));
+			this.bewegeFigur(control.getFigurOnBoard(analyse.letterConverter(values[0]), Integer.parseInt(values[1]), board), analyse.letterConverter(values[2]), Integer.parseInt(values[3]));
 			
 			viewer.zeigeSpielBrett(board);
+			
 			this.listenUser();
 			}
+			
+			//Ablage-Befehl
 		}else if(command.getCommand().equals(CommandConst.ABL)){
 			System.out.println("Geschlagene Figuren:");
 			for(Piece item: geschlagene){
@@ -222,9 +170,11 @@ public class GameMaster {
 			
 			this.listenUser();
 			
+			//Exit-Befehl
 		}else if(command.getCommand().equals(CommandConst.EXIT)){
 			
-			System.out.println("Spiel beendet");
+			this.saveBoard();
+			System.out.println("Spiel gesichert und beendet");
 			
 		}else{
 			System.out.println("Fehler!");
@@ -234,6 +184,9 @@ public class GameMaster {
 	public GameMaster(){
 		viewer = new Viewer();
 		listener = new CommandListener();
+		saver = new Saver();
+		analyse = new Analyser();
+		control = new Controller();
 	}
 	
 	public static void main(String[] args) {
@@ -241,11 +194,15 @@ public class GameMaster {
 		GameMaster chef = new GameMaster();
 		Viewer view = new Viewer();
 		
-		board = chef.aufstellungGenerieren(board);
-		view.zeigeSpielBrett(board);
+        if (new File("Save.xml").exists()) {
+        	board = chef.loadBoard();
+        	view.zeigeSpielBrett(board);
+        } else {
+        	view.zeigeSpielBrett(chef.aufstellungGenerieren());
+        }
+		
 		chef.listenUser();
-		
-		
+			
 	}
 
 }

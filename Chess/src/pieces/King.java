@@ -1,6 +1,82 @@
 package pieces;
 
+import java.util.ArrayList;
+
 public class King extends Piece{
+	
+	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd){
+		
+		ArrayList<String> possibleDestinations = new ArrayList<String>();
+		String destPoint = xPosEnd+","+yPosEnd;
+		
+		
+		//nach rechts 
+		if(xPosStart+1<=7){
+			int x = xPosStart+1;
+			int y = yPosStart;
+			possibleDestinations.add(x+","+y);
+		}
+		
+		//nach links
+		if(xPosStart-1>=0){
+			int x = xPosStart-1;
+			int y = yPosStart;
+			possibleDestinations.add(x+","+y);
+		}
+		
+		//nach oben
+		if(yPosStart-1>=0){
+			int x = xPosStart;
+			int y = yPosStart-1;
+			possibleDestinations.add(x+","+y);
+		}
+		
+		//nach unten
+		if(yPosStart+1<=7){
+			int x = xPosStart;
+			int y = yPosStart+1;
+			possibleDestinations.add(x+","+y);
+		}
+		
+		//nach rechts und unten
+		if(xPosStart+1<=7 && yPosStart+1<=7){
+			int x = xPosStart+1;
+			int y = yPosStart+1;
+			possibleDestinations.add(x+","+y);
+		}
+		
+		//nach links und unten
+		if(xPosStart-1>=0 && yPosStart+1<=7){
+			int x = xPosStart-1;
+			int y = yPosStart+1;
+			possibleDestinations.add(x+","+y);
+		}
+		
+		//nach rechts und oben
+		if(xPosStart+1<=7 && yPosStart-1>=0){
+			int x = xPosStart+1;
+			int y = yPosStart-1;
+			possibleDestinations.add(x+","+y);
+		}
+		
+		//nach links und oben
+		if(xPosStart-1>=0 && yPosStart-1>=0){
+			int x = xPosStart-1;
+			int y = yPosStart-1;
+			possibleDestinations.add(x+","+y);
+		}
+		
+		//Prüfung
+		for(String item: possibleDestinations){
+			
+			if(item.equals(destPoint)){
+				return true;
+			}
+		}
+		possibleDestinations.clear();
+		
+		return false;
+	}
 	
 	public King(String color){
 		
@@ -28,6 +104,10 @@ public class King extends Piece{
 		}
 		
 
+	}
+	
+	public King(){
+		
 	}
 
 }

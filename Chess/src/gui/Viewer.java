@@ -1,6 +1,6 @@
-package field;
+package gui;
 
-import pieces.Piece;
+import pieces.*;
 
 public class Viewer {
 	
@@ -19,6 +19,8 @@ public class Viewer {
 				if(spielBrett[i][j]==null){
 					Piece nix = new Piece();
 					nix.setSymbol("  ");
+					nix.setPositionY(i);
+					nix.setPositionX(j);
 					spielBrett[i][j]=nix;
 				}
 				System.out.print("| "+spielBrett[i][j].getSymbol()+" |");

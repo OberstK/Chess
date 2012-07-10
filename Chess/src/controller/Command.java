@@ -1,4 +1,4 @@
-package field;
+package controller;
 
 public class Command {
 

@@ -22,44 +22,52 @@ public class Bishop extends Piece{
 		for (int i=1;i<=7; i++){
 			int xPosTest = xPosStart+i;
 			int yPosTest = yPosStart+i;
-			if(board[yPosTest][xPosTest].getSymbol()=="  "){
-				possibleDestinations.add(xPosTest+","+yPosTest);
-			}else{
-				possibleDestinations.add(xPosTest+","+yPosTest);
-				i=8;
+			if(xPosTest<=7 && yPosTest<=7){
+				if(board[yPosTest][xPosTest].getSymbol()=="  "){
+					possibleDestinations.add(xPosTest+","+yPosTest);
+				}else{
+					possibleDestinations.add(xPosTest+","+yPosTest);
+					i=8;
+				}
 			}
 		}
 		//nach rechts oben
 		for (int i=1;i<=7; i++){
 			int xPosTest = xPosStart+i;
 			int yPosTest = yPosStart-i;
-			if(board[yPosTest][xPosTest].getSymbol()=="  "){
-				possibleDestinations.add(xPosTest+","+yPosTest);
-			}else{
-				possibleDestinations.add(xPosTest+","+yPosTest);
-				i=8;
+			if(xPosTest<=7 && yPosStart >=0){
+				if(board[yPosTest][xPosTest].getSymbol()=="  "){
+					possibleDestinations.add(xPosTest+","+yPosTest);
+				}else{
+					possibleDestinations.add(xPosTest+","+yPosTest);
+					i=8;
+				}
 			}
 		}
 		//nach links unten
 		for (int i=1;i<=7; i++){
 			int xPosTest = xPosStart-i;
 			int yPosTest = yPosStart+i;
-			if(board[yPosTest][xPosTest].getSymbol()=="  "){
-				possibleDestinations.add(xPosTest+","+yPosTest);
-			}else{
-				possibleDestinations.add(xPosTest+","+yPosTest);
-				i=8;
+			if(xPosTest>=0 && yPosTest<=7){
+				if(board[yPosTest][xPosTest].getSymbol()=="  "){
+					possibleDestinations.add(xPosTest+","+yPosTest);
+				}else{
+					possibleDestinations.add(xPosTest+","+yPosTest);
+					i=8;
+				}
 			}
 		}
 		//nach links oben
 		for (int i=1;i<=7; i++){
 			int xPosTest = xPosStart-i;
 			int yPosTest = yPosStart-i;
-			if(board[yPosTest][xPosTest].getSymbol()=="  "){
-				possibleDestinations.add(xPosTest+","+yPosTest);
-			}else{
-				possibleDestinations.add(xPosTest+","+yPosTest);
-				i=8;
+			if(xPosTest>=0 && yPosTest>=0){
+				if(board[yPosTest][xPosTest].getSymbol()=="  "){
+					possibleDestinations.add(xPosTest+","+yPosTest);
+				}else{
+					possibleDestinations.add(xPosTest+","+yPosTest);
+					i=8;
+				}
 			}
 		}
 		
@@ -104,6 +112,9 @@ public class Bishop extends Piece{
 			this.setPositionY(0);
 		}
 		
+		
+	}
+	public Bishop(){
 		
 	}
 
