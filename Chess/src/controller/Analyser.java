@@ -50,7 +50,8 @@ public class Analyser {
 						Rock rock = (Rock) board[7][0];
 						if(rock.isRochade()){
 							System.out.println("Turm darf rochieren");
-							if(board[7][6].getSymbol() == "  " && board[7][5].getSymbol() == "  "){
+							if(board[7][6].getSymbol().equals("  ") && board[7][5].getSymbol().equals("  ")){
+								System.out.println("Felder dazwischen sind frei");
 								return true;
 							}
 						}
@@ -67,7 +68,7 @@ public class Analyser {
 					if(board[0][7] instanceof Rock){
 						Rock rock = (Rock) board[0][0];
 						if(rock.isRochade()){
-							if(board[0][6].getSymbol() == "  " && board[0][5].getSymbol() == "  "){
+							if(board[0][6].getSymbol().equals("  ") && board[0][5].getSymbol().equals("  ")){
 								return true;
 							}
 						}
@@ -91,7 +92,7 @@ public class Analyser {
 					if(board[7][0] instanceof Rock){
 						Rock rock = (Rock) board[7][0];
 						if(rock.isRochade()){
-							if(board[7][1].getSymbol() == "  " && board[7][2].getSymbol() == "  " && board[7][3].getSymbol() == "  "){
+							if(board[7][1].getSymbol().equals("  ") && board[7][2].getSymbol().equals("  ") && board[7][3].getSymbol().equals("  ")){
 								return true;
 							}
 						}
@@ -108,7 +109,7 @@ public class Analyser {
 					if(board[0][0] instanceof Rock){
 						Rock rock = (Rock) board[0][0];
 						if(rock.isRochade()){
-							if(board[0][1].getSymbol() == "  " && board[0][2].getSymbol() == "  " && board[0][3].getSymbol() == "  "){
+							if(board[0][1].getSymbol().equals("  ") && board[0][2].getSymbol().equals("  ") && board[0][3].getSymbol().equals("  ")){
 								return true;
 							}
 						}

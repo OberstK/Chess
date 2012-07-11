@@ -13,63 +13,69 @@ public class Bishop extends Piece{
 		this.count = count;
 	}
 	
-	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd, Piece[][] board){
-		
+	public ArrayList<String> getPossibleMoveDestinations(int xPosStart, int yPosStart, Piece[][] board){
 		ArrayList<String> possibleDestinations = new ArrayList<String>();
-		String destPoint = xPosEnd+","+yPosEnd;
 		
 		//nach rechts unten
-		for (int i=1;i<=7; i++){
-			int xPosTest = xPosStart+i;
-			int yPosTest = yPosStart+i;
-			if(xPosTest<=7 && yPosTest<=7){
-				if(board[yPosTest][xPosTest].getSymbol()=="  "){
-					possibleDestinations.add(xPosTest+","+yPosTest);
-				}else{
-					possibleDestinations.add(xPosTest+","+yPosTest);
-					i=8;
+				for (int i=1;i<=7; i++){
+					int xPosTest = xPosStart+i;
+					int yPosTest = yPosStart+i;
+					if(xPosTest<=7 && yPosTest<=7){
+						if(board[yPosTest][xPosTest].getSymbol().equals("  ")){
+							possibleDestinations.add(xPosTest+","+yPosTest);
+						}else{
+							possibleDestinations.add(xPosTest+","+yPosTest);
+							i=8;
+						}
+					}
 				}
-			}
-		}
-		//nach rechts oben
-		for (int i=1;i<=7; i++){
-			int xPosTest = xPosStart+i;
-			int yPosTest = yPosStart-i;
-			if(xPosTest<=7 && yPosStart >=0){
-				if(board[yPosTest][xPosTest].getSymbol()=="  "){
-					possibleDestinations.add(xPosTest+","+yPosTest);
-				}else{
-					possibleDestinations.add(xPosTest+","+yPosTest);
-					i=8;
+				//nach rechts oben
+				for (int i=1;i<=7; i++){
+					int xPosTest = xPosStart+i;
+					int yPosTest = yPosStart-i;
+					if(xPosTest<=7 && yPosTest >=0){
+						if(board[yPosTest][xPosTest].getSymbol().equals("  ")){
+							possibleDestinations.add(xPosTest+","+yPosTest);
+						}else{
+							possibleDestinations.add(xPosTest+","+yPosTest);
+							i=8;
+						}
+					}
 				}
-			}
-		}
-		//nach links unten
-		for (int i=1;i<=7; i++){
-			int xPosTest = xPosStart-i;
-			int yPosTest = yPosStart+i;
-			if(xPosTest>=0 && yPosTest<=7){
-				if(board[yPosTest][xPosTest].getSymbol()=="  "){
-					possibleDestinations.add(xPosTest+","+yPosTest);
-				}else{
-					possibleDestinations.add(xPosTest+","+yPosTest);
-					i=8;
+				//nach links unten
+				for (int i=1;i<=7; i++){
+					int xPosTest = xPosStart-i;
+					int yPosTest = yPosStart+i;
+					if(xPosTest>=0 && yPosTest<=7){
+						if(board[yPosTest][xPosTest].getSymbol().equals("  ")){
+							possibleDestinations.add(xPosTest+","+yPosTest);
+						}else{
+							possibleDestinations.add(xPosTest+","+yPosTest);
+							i=8;
+						}
+					}
 				}
-			}
-		}
-		//nach links oben
-		for (int i=1;i<=7; i++){
-			int xPosTest = xPosStart-i;
-			int yPosTest = yPosStart-i;
-			if(xPosTest>=0 && yPosTest>=0){
-				if(board[yPosTest][xPosTest].getSymbol()=="  "){
-					possibleDestinations.add(xPosTest+","+yPosTest);
-				}else{
-					possibleDestinations.add(xPosTest+","+yPosTest);
-					i=8;
+				//nach links oben
+				for (int i=1;i<=7; i++){
+					int xPosTest = xPosStart-i;
+					int yPosTest = yPosStart-i;
+					if(xPosTest>=0 && yPosTest>=0){
+						if(board[yPosTest][xPosTest].getSymbol().equals("  ")){
+							possibleDestinations.add(xPosTest+","+yPosTest);
+						}else{
+							possibleDestinations.add(xPosTest+","+yPosTest);
+							i=8;
+						}
+					}
 				}
-			}
-		}
+		
+		return possibleDestinations;
+	}
+	
+	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd, Piece[][] board){
+		ArrayList<String> possibleDestinations = this.getPossibleMoveDestinations(xPosStart, yPosStart, board);
+
+		String destPoint = xPosEnd+","+yPosEnd;
 		
 		//Prüfung
 		for(String item: possibleDestinations){
@@ -77,9 +83,7 @@ public class Bishop extends Piece{
 				return true;
 			}
 		}
-		possibleDestinations.clear();
-
-		
+	
 		return false;
 	}
 	

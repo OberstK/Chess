@@ -14,69 +14,73 @@ public class King extends Piece{
 		this.rochade = rochade;
 	}
 
+	public ArrayList<String> getPossibleMoveDestinations(int xPosStart, int yPosStart){
+		ArrayList<String> possibleDestinations = new ArrayList<String>();
+		
+		//nach rechts 
+				if(xPosStart+1<=7){
+					int x = xPosStart+1;
+					int y = yPosStart;
+					possibleDestinations.add(x+","+y);
+				}
+				
+				//nach links
+				if(xPosStart-1>=0){
+					int x = xPosStart-1;
+					int y = yPosStart;
+					possibleDestinations.add(x+","+y);
+				}
+				
+				//nach oben
+				if(yPosStart-1>=0){
+					int x = xPosStart;
+					int y = yPosStart-1;
+					possibleDestinations.add(x+","+y);
+				}
+				
+				//nach unten
+				if(yPosStart+1<=7){
+					int x = xPosStart;
+					int y = yPosStart+1;
+					possibleDestinations.add(x+","+y);
+				}
+				
+				//nach rechts und unten
+				if(xPosStart+1<=7 && yPosStart+1<=7){
+					int x = xPosStart+1;
+					int y = yPosStart+1;
+					possibleDestinations.add(x+","+y);
+				}
+				
+				//nach links und unten
+				if(xPosStart-1>=0 && yPosStart+1<=7){
+					int x = xPosStart-1;
+					int y = yPosStart+1;
+					possibleDestinations.add(x+","+y);
+				}
+				
+				//nach rechts und oben
+				if(xPosStart+1<=7 && yPosStart-1>=0){
+					int x = xPosStart+1;
+					int y = yPosStart-1;
+					possibleDestinations.add(x+","+y);
+				}
+				
+				//nach links und oben
+				if(xPosStart-1>=0 && yPosStart-1>=0){
+					int x = xPosStart-1;
+					int y = yPosStart-1;
+					possibleDestinations.add(x+","+y);
+				}
+		
+		return possibleDestinations;
+	}
 
 	
 	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd){
 		
-		ArrayList<String> possibleDestinations = new ArrayList<String>();
+		ArrayList<String> possibleDestinations = this.getPossibleMoveDestinations(xPosStart, yPosStart);
 		String destPoint = xPosEnd+","+yPosEnd;
-		
-		
-		//nach rechts 
-		if(xPosStart+1<=7){
-			int x = xPosStart+1;
-			int y = yPosStart;
-			possibleDestinations.add(x+","+y);
-		}
-		
-		//nach links
-		if(xPosStart-1>=0){
-			int x = xPosStart-1;
-			int y = yPosStart;
-			possibleDestinations.add(x+","+y);
-		}
-		
-		//nach oben
-		if(yPosStart-1>=0){
-			int x = xPosStart;
-			int y = yPosStart-1;
-			possibleDestinations.add(x+","+y);
-		}
-		
-		//nach unten
-		if(yPosStart+1<=7){
-			int x = xPosStart;
-			int y = yPosStart+1;
-			possibleDestinations.add(x+","+y);
-		}
-		
-		//nach rechts und unten
-		if(xPosStart+1<=7 && yPosStart+1<=7){
-			int x = xPosStart+1;
-			int y = yPosStart+1;
-			possibleDestinations.add(x+","+y);
-		}
-		
-		//nach links und unten
-		if(xPosStart-1>=0 && yPosStart+1<=7){
-			int x = xPosStart-1;
-			int y = yPosStart+1;
-			possibleDestinations.add(x+","+y);
-		}
-		
-		//nach rechts und oben
-		if(xPosStart+1<=7 && yPosStart-1>=0){
-			int x = xPosStart+1;
-			int y = yPosStart-1;
-			possibleDestinations.add(x+","+y);
-		}
-		
-		//nach links und oben
-		if(xPosStart-1>=0 && yPosStart-1>=0){
-			int x = xPosStart-1;
-			int y = yPosStart-1;
-			possibleDestinations.add(x+","+y);
-		}
 		
 		//Prüfung
 		for(String item: possibleDestinations){
@@ -84,7 +88,6 @@ public class King extends Piece{
 				return true;
 			}
 		}
-		possibleDestinations.clear();
 		
 		return false;
 	}
@@ -102,8 +105,6 @@ public class King extends Piece{
 			System.out.println("Farbe nicht bekannt!");
 		}
 		
-		
-		
 		if(this.isOwner()==true){
 			this.setColor("Weiß");
 			this.setPositionX(4);
@@ -114,12 +115,9 @@ public class King extends Piece{
 			this.setPositionX(4);
 			this.setPositionY(0);
 		}
-		
-
 	}
 	
 	public King(){
 		
 	}
-
 }

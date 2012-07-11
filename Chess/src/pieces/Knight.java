@@ -13,46 +13,59 @@ public class Knight extends Piece{
 		this.count = count;
 	}
 	
-	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd) {
-		
+	public ArrayList<String> getPossibleMoveDestinations(int xPosStart, int yPosStart){
 		ArrayList<String> possibleDestinations = new ArrayList<String>();
-		String destPoint = xPosEnd+","+yPosEnd;
 		
+		//nach rechts und unten
 		if(xPosStart+2<=7 && yPosStart+1<=7){
 			int x = xPosStart+2;
 			int y = yPosStart+1;
 			possibleDestinations.add(x+","+y);
 		}
+		
+		//nach rechts und oben
 		if(xPosStart+2<=7 && yPosStart-1>=0){
 			int x = xPosStart+2;
 			int y = yPosStart-1;
 			possibleDestinations.add(x+","+y);
 		}
+		
+		//nach links und oben
 		if(xPosStart-2>=0 && yPosStart+1<=7){
 			int x = xPosStart-2;
 			int y = yPosStart+1;
 			possibleDestinations.add(x+","+y);
 		}
+		
+		//nach links und unten
 		if(xPosStart-2>=0 && yPosStart-1>=0){
 			int x = xPosStart-2;
 			int y = yPosStart-1;
 			possibleDestinations.add(x+","+y);
 		}
+		
+		//nach oben und rechts
 		if(yPosStart+2<=7 && xPosStart+1<=7){
 			int y = yPosStart+2;
 			int x = xPosStart+1;
 			possibleDestinations.add(x+","+y);
 		}
+		
+		//nach oben und links
 		if(yPosStart+2<=7 && xPosStart-1>=0){
 			int y = yPosStart+2;
 			int x = xPosStart-1;
 			possibleDestinations.add(x+","+y);
 		}
+		
+		//nach unten und rechts
 		if(yPosStart-2>=0 && xPosStart+1<=7){
 			int y = yPosStart-2;
 			int x = xPosStart+1;
 			possibleDestinations.add(x+","+y);
 		}
+		
+		//nach unten und links
 		if(yPosStart-2>=0 && xPosStart-1>=0){
 			int y = yPosStart-2;
 			int x = xPosStart-1;
@@ -60,13 +73,20 @@ public class Knight extends Piece{
 		}
 		
 		
+		return possibleDestinations;
+	}
+	
+	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd) {
+		
+		ArrayList<String> possibleDestinations = this.getPossibleMoveDestinations(xPosStart, yPosStart);
+		String destPoint = xPosEnd+","+yPosEnd;
 
+		//Prüfung
 		for(String item: possibleDestinations){
 			if(item.equals(destPoint)){
 				return true;
 			}
 		}
-		possibleDestinations.clear();
 
 		return false;
 	}

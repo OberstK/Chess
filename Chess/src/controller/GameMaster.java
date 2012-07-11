@@ -71,6 +71,8 @@ public class GameMaster {
 			Pawn pawn = (Pawn) figur;
 			if(pawn.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board, pawn.isOwner())){
 				test = true;
+			}else if(pawn.hitPossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board, pawn.isOwner())){
+				test = true;
 			}
 		}else if(figur instanceof Bishop){
 			Bishop bishop = (Bishop) figur;
@@ -165,12 +167,16 @@ public class GameMaster {
 
 		Command command = listener.scanInput();
 		//Wer ist dran?
-		boolean ownerOnTurn = true;
+		Player playerOnTurn = new Player();
+		Player playerNotOnTurn = new Player();
 		for(int i=0; i<=1; i++){
 			if(spieler[i].isOnTurn()){
-				ownerOnTurn = spieler[i].isOwner();
+				playerOnTurn = spieler[i];
+			}else{
+				playerNotOnTurn = spieler[i];
 			}
 		}
+
 		
 		//Befehlsinterpreter
 		if(command == null){
@@ -181,31 +187,90 @@ public class GameMaster {
 		}else if(command.getCommand().equals(CommandConst.ZUG)){
 			//Zug-Befehl
 			String[] values = command.getValues();
+			//Werte
+			int sLetter = analyse.letterConverter(values[0]);
+			int sNum = Integer.parseInt(values[1]);
+			int zLetter = analyse.letterConverter(values[2]);
+			int zNum = Integer.parseInt(values[3]);
 			
-			
-			if(control.getFigurOnBoard(analyse.letterConverter(values[0]), Integer.parseInt(values[1]), board)==null){
+			//Prüfe ob Figur an dieser Stelle
+			if(control.getFigurOnBoard(sLetter, sNum, board)==null){
 				System.out.println("Keine Figur an dieser Stelle!");
 				viewer.zeigeSpielBrett(board);
 				this.listenUser();
-			}else if(control.getFigurOnBoard(analyse.letterConverter(values[0]), Integer.parseInt(values[1]), board).isOwner()!=ownerOnTurn){
+				
+			//Prüfe ob eigene Figur
+			}else if(control.getFigurOnBoard(sLetter, sNum, board).isOwner()!=playerOnTurn.isOwner()){
 				System.out.println("Das ist keine von deinen Figuren!");
 				viewer.zeigeSpielBrett(board);
 				this.listenUser();
+			
+			//ist eigene und vorhandene Figur, führe Zug durch
 			}else{
-				if(this.bewegeFigur(control.getFigurOnBoard(analyse.letterConverter(values[0]), Integer.parseInt(values[1]), board), analyse.letterConverter(values[2]), Integer.parseInt(values[3]))){
-					//Spieler wechseln
-					for(int i=0; i<=1; i++){
-						spieler[i].setOnTurn(!(spieler[i].isOnTurn()));
+				boolean reverse = false;
+				boolean gameEnded = false;
+				//Prüfung auf Schachmatt
+				if(playerOnTurn.isImSchach() && control.getFigurOnBoard(sLetter, sNum, board) instanceof King){
+					King king = (King) control.getFigurOnBoard(sLetter, sNum, board);
+					if(king.getPossibleMoveDestinations(sLetter, sNum).isEmpty()){
+						System.out.println("Schachmatt! "+playerOnTurn.getName()+" hat verloren");
 					}
-					if(this.weissAmZug()){
-						System.out.println(spieler[0].getName()+" - "+spieler[0].getColor()+" ist am Zug");
+				}
+				//Prüfung auf Schach
+				else if(playerOnTurn.isImSchach() && !(control.getFigurOnBoard(zLetter, zNum, board) instanceof King)){
+					if(this.bewegeFigur(control.getFigurOnBoard(zLetter, zNum, board), sLetter, sNum)==false){
+						System.out.println("Reverse nicht möglich! Schwerwiegender Fehler!");
 					}else{
-						System.out.println(spieler[1].getName()+" - "+spieler[1].getColor()+" ist am Zug");
+						System.out.println("Du stehst im Schach!");
+						reverse =true;
+					}	
+					
+				//Bewegung durchführen
+				}else if(this.bewegeFigur(control.getFigurOnBoard(sLetter, sNum, board), zLetter, zNum)){
+					
+					//Prüfe ob man selbst im Schach steht nach dem Zug
+					if(control.pruefeAufOwnerImSchach(board, !playerOnTurn.isOwner())){
+						if(this.bewegeFigur(control.getFigurOnBoard(zLetter, zNum, board), sLetter, sNum)==false){
+							System.out.println("Reverse nicht möglich! Schwerwiegender Fehler!");
+						}else{
+							System.out.println("Du würdest nach diesem Zug im Schach stehen!");
+							reverse =true;
+						}
+					}	
+
+					//Prüfe auf Schachmatt des Spielers der nicht dran ist
+					if(control.testIfCheckMate(!playerOnTurn.isOwner(), board)){
+						System.out.println("Schachmatt!");
+						gameEnded = true;
+					}
+					//Schach-Var setzen wenn im Schach
+					else if(control.pruefeAufOwnerImSchach(board, playerOnTurn.isOwner())){
+						playerOnTurn.setImSchach(playerOnTurn.isOwner());
+						System.out.println(playerNotOnTurn.getColor()+" im Schach!");
+					}else{
+						playerOnTurn.setImSchach(false);
+					}
+					
+					if(playerOnTurn.isOwner()){
+						spieler[0] = playerOnTurn;
+					}else{
+						spieler[1] = playerOnTurn;
+					}
+				}
+				
+				if(gameEnded){
+					System.out.println(playerOnTurn.getName()+" hat gewonnen! Programm wird beendet");
+				}else{
+					if(reverse){
+						viewer.zeigeSpielBrett(board);
+						this.listenUser();
+					}else{
+						this.changePlayers();
+						viewer.zeigeSpielBrett(board);
+						this.listenUser();
 					}
 				}
 
-				viewer.zeigeSpielBrett(board);
-				this.listenUser();
 			}
 			
 			
@@ -222,28 +287,40 @@ public class GameMaster {
 			
 		}else if(command.getCommand().equals(CommandConst.RS)){
 			//Rochade kurz
-			if(analyse.rochadeShortPossible(ownerOnTurn, board)){
+			if(analyse.rochadeShortPossible(playerOnTurn.isOwner(), board)){
 				//Weiss
-				if(ownerOnTurn = true){
-					Rock rock = (Rock) control.getFigurOnBoard(7, 8, board);
-					King king = (King) control.getFigurOnBoard(4, 8, board);
-					king.setPositionX(6);
-					rock.setPositionX(5);
+				if(playerOnTurn.isOwner() == true){
+					control.doKurzeRochade(true, board);
+					this.changePlayers();
+				//Schwarz	
 				}else{
-					Rock rock = (Rock) control.getFigurOnBoard(7, 1, board);
-					King king = (King) control.getFigurOnBoard(4, 1, board);
-					king.setPositionX(6);
-					rock.setPositionX(5);
+					control.doKurzeRochade(false, board);
+					this.changePlayers();
 				}
 			}else{
 				System.out.println("kurze Rochade nicht möglich. Figuren im Weg oder an falscher Position!");
 			}
+			viewer.zeigeSpielBrett(board);
 			this.listenUser();
-	
+			
 		}else if(command.getCommand().equals(CommandConst.RL)){
 			//Rochade Lang
-			
-
+			if(analyse.rochadeLongPossible(playerOnTurn.isOwner(), board)){
+				//Weiss
+				if(playerOnTurn.isOwner() == true){
+					control.doLangeRochade(true, board);
+					this.changePlayers();
+					//Schwarz
+				}else{
+					
+					control.doLangeRochade(false, board);
+					this.changePlayers();
+				}
+			}else{
+				System.out.println("lange Rochade nicht möglich. Figuren im Weg oder an falscher Position!");
+			}
+			viewer.zeigeSpielBrett(board);
+			this.listenUser();
 			
 		}else if(command.getCommand().equals(CommandConst.EXIT)){
 			//Exit-Befehl
@@ -251,12 +328,12 @@ public class GameMaster {
 			this.saveBoard();
 			System.out.println("Spiel gesichert und beendet");
 			
-			
 		}else if(command.getCommand().equals(CommandConst.NEW)){
 			//New Game Befehl
 			this.resetBoard();
 			this.startGame();
 			System.out.println("Neues Spiel gestartet");
+			viewer.zeigeSpielBrett(board);
 			this.listenUser();
 			
 		}else if(command.getCommand().equals(CommandConst.ERR)){
@@ -278,21 +355,25 @@ public class GameMaster {
 		return false;
 	}
 	
+	
+	public void changePlayers(){
+		//Spieler wechseln
+		for(int i=0; i<=1; i++){
+			spieler[i].setOnTurn(!(spieler[i].isOnTurn()));
+		}
+		if(this.weissAmZug()){
+			System.out.println(spieler[0].getName()+" - "+spieler[0].getColor()+" ist am Zug");
+		}else{
+			System.out.println(spieler[1].getName()+" - "+spieler[1].getColor()+" ist am Zug");
+		}
+	}
 	public void startGame(){
 
 		//Spieler 1
-		Player player1 = new Player();
-		player1.setName("Spieler 1");
-		player1.setColor("Weiss");
-		player1.setOnTurn(true);
-		player1.setOwner(true);
+		Player player1 = new Player("Spieler 1", true);
 		
 		//Spieler 2
-		Player player2 = new Player();
-		player2.setName("Spieler 2");
-		player2.setColor("Schwarz");
-		player2.setOnTurn(false);
-		player2.setOwner(false);
+		Player player2 = new Player("Spieler 2", false);
 
 		spieler[0] = player1;
 		spieler[1] = player2;
@@ -320,11 +401,13 @@ public class GameMaster {
         	System.out.println("Gespeichertes Spiel gefunden. Lade...");
         	board = chef.loadBoard();
         	spieler = chef.loadPlayers();
+        	System.out.println("Spiel geladen.");
         	view.zeigeSpielBrett(board);
         } else {
         	System.out.println("Kein gespeichertes Spiel gefunden. Beginne Neues...");
         	chef.startGame();
         	chef.resetBoard();
+        	System.out.println("Neues Spiel gestartet. Viel Spass.");
         	view.zeigeSpielBrett(board);
         }
 		

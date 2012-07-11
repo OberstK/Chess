@@ -6,7 +6,16 @@ public class Player {
 	private String name;
 	private String color;
 	private boolean owner;
+	private boolean imSchach;
 	
+	public boolean isImSchach() {
+		return imSchach;
+	}
+
+	public void setImSchach(boolean imSchach) {
+		this.imSchach = imSchach;
+	}
+
 	public boolean isOwner() {
 		return owner;
 	}
@@ -39,9 +48,20 @@ public class Player {
 		this.color = color;
 	}
 
+	public Player(String name, boolean owner){
+		if(owner){
+			this.setColor("Weiss");
+			this.setOnTurn(true);
+			
+		}else{
+			this.setColor("Schwarz");
+			this.setOnTurn(false);
+		}
+		this.setOwner(owner);
+		this.setImSchach(false);
+		this.setName(name);
+	}
 	public Player(){
-		
-		
 		
 	}
 

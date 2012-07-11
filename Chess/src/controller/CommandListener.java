@@ -23,10 +23,16 @@ public class CommandListener {
         parts[0] = parts[0].trim();
 		parts[1] = parts[1].trim();
 
-        values[0] = parts[0].substring(0,1);
-		values[1] = parts[0].substring(1,2);
-		values[2] = parts[1].substring(0,1);
-		values[3] = parts[1].substring(1,2);
+        try {
+			values[0] = parts[0].substring(0,1);
+			values[1] = parts[0].substring(1,2);
+			values[2] = parts[1].substring(0,1);
+			values[3] = parts[1].substring(1,2);
+		} catch (StringIndexOutOfBoundsException e) {
+			return null;
+		} catch (ArrayIndexOutOfBoundsException e){
+			return null;
+		}
 		
 		/*
 		System.out.println(values[0]);
@@ -78,13 +84,13 @@ public class CommandListener {
 	    	
 	    	return command;
 	    	
-	    } else if(input.contains("rochade kurz")){
+	    } else if(input.contains("kurze rochade")){
 	    	
 	    	command.setCommand(CommandConst.RS);
 	    	
 	    	return command;
 	    	
-	    }else if(input.contains("rochade lang")){
+	    }else if(input.contains("lange rochade")){
 	    	
 	    	command.setCommand(CommandConst.RL);
 	    	

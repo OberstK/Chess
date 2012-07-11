@@ -89,7 +89,6 @@ public void savePlayersToXML(Player[] spieler){
 	        XMLDecoder de = new XMLDecoder(new BufferedInputStream(new FileInputStream("Players.xml")));
 	        while (objectsLeft) {
 	        	spieler[i] = (Player) de.readObject();
-	        	System.out.println("Spieler gefunden");
 	        	i++;
 	        }
 	        de.close();

@@ -14,84 +14,120 @@ public class Pawn extends Piece{
 		this.count = count;
 	}
 	
-	
-	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd, Piece[][] board, boolean owner){
+	public ArrayList<String> getPossibleMoveDestinations(int xPosStart, int yPosStart, Piece[][] board, boolean owner){
 		boolean doubleMove = false;
 		ArrayList<String> possibleDestinations = new ArrayList<String>();
-		String destPoint = xPosEnd+","+yPosEnd;
 		
 		if((owner && yPosStart==6)||(owner==false && yPosStart==1)){
 			doubleMove = true;
 		}
 		
 		//Weiß
-		if(owner){
-			//Bewegung nach Vorne (1 und 2 Schritte)
-			if(yPosStart-1>=0){
-				if(board[yPosStart-1][xPosStart].getSymbol()=="  "){
-					possibleDestinations.add(xPosStart+","+(yPosStart-1));
-					if(yPosStart-2>=0){
-						if(doubleMove && board[yPosStart-2][xPosStart].getSymbol()=="  "){
-							possibleDestinations.add(xPosStart+","+(yPosStart-2));
+				if(owner){
+					//Bewegung nach Vorne (1 und 2 Schritte)
+					if(yPosStart-1>=0){
+						if(board[yPosStart-1][xPosStart].getSymbol().equals("  ")){
+							possibleDestinations.add(xPosStart+","+(yPosStart-1));
+							if(yPosStart-2>=0){
+								if(doubleMove && board[yPosStart-2][xPosStart].getSymbol().equals("  ")){
+									possibleDestinations.add(xPosStart+","+(yPosStart-2));
+								}
+							}
 						}
 					}
+
+					
 				}
-			}
+
+				//Schwarz
+				else{
+					//Bewegung nach Vorne (1 und 2 Schritte)
+						if(yPosStart+1<=7){
+							if(board[yPosStart+1][xPosStart].getSymbol().equals("  ")){
+								possibleDestinations.add(xPosStart+","+(yPosStart+1));
+								if(yPosStart+2<=7){
+									if(doubleMove && board[yPosStart+2][xPosStart].getSymbol().equals("  ")){
+										possibleDestinations.add(xPosStart+","+(yPosStart+2));
+									}
+								}
+							}
+						}
+
+				}
+		
+		return possibleDestinations;
+	}
+	
+	public ArrayList<String> getPossibleHitDestinations(int xPosStart, int yPosStart, Piece[][] board, boolean owner){
+		
+		ArrayList<String> possibleDestinations = new ArrayList<String>();
+		
+		//Weiss
+		if(owner){
 			//Schlagen nach rechts
 			if(yPosStart-1 >= 0 && xPosStart+1 <= 7){
-				if(board[yPosStart-1][xPosStart+1].getSymbol()!="  " && board[yPosStart+1][xPosStart+1].isOwner()!=owner){
+				if(!board[yPosStart-1][xPosStart+1].getSymbol().equals("  ") && board[yPosStart-1][xPosStart+1].isOwner()!=owner){
 					possibleDestinations.add((xPosStart+1)+","+(yPosStart-1));
 				}
 			}
 			
 			//Schlagen nach links
 			if(yPosStart-1 >= 0 && xPosStart-1 >= 0){
-				if(board[yPosStart-1][xPosStart-1].getSymbol()!="  " && board[yPosStart+1][xPosStart+1].isOwner()!=owner){
+				if(!board[yPosStart-1][xPosStart-1].getSymbol().equals("  ") && board[yPosStart-1][xPosStart-1].isOwner()!=owner){
 					possibleDestinations.add((xPosStart-1)+","+(yPosStart-1));
 				}
 			}
 			
-		}
-
 		//Schwarz
-		if(owner==false){
-			//Bewegung nach Vorne (1 und 2 Schritte)
-				if(yPosStart+1<=7){
-					if(board[yPosStart+1][xPosStart].getSymbol()=="  "){
-						possibleDestinations.add(xPosStart+","+(yPosStart+1));
-						if(yPosStart+2<=7){
-							if(doubleMove && board[yPosStart+2][xPosStart].getSymbol()=="  "){
-								possibleDestinations.add(xPosStart+","+(yPosStart+2));
-							}
-						}
-					}
-				}
-			
+		}else{
+
 			//Schlagen nach rechts
 			if(yPosStart+1 <= 7 && xPosStart+1 <= 7){
-				if(board[yPosStart+1][xPosStart+1].getSymbol()!="  " && board[yPosStart+1][xPosStart+1].isOwner()!=owner){
+				if(!board[yPosStart+1][xPosStart+1].getSymbol().equals("  ") && board[yPosStart+1][xPosStart+1].isOwner()!=owner){
 					possibleDestinations.add((xPosStart+1)+","+(yPosStart+1));
 				}
 			}
 			
 			//Schlagen nach links
 			if(yPosStart+1 <=7 && xPosStart-1>=0){
-				if(board[yPosStart+1][xPosStart-1].getSymbol()!="  " && board[yPosStart+1][xPosStart-1].isOwner()!=owner){
+				if(!board[yPosStart+1][xPosStart-1].getSymbol().equals("  ") && board[yPosStart+1][xPosStart-1].isOwner()!=owner){
 					possibleDestinations.add((xPosStart-1)+","+(yPosStart+1));
 				}
 			}
 		}
 		
+		return possibleDestinations;
+	} 
+	
+	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd, Piece[][] board, boolean owner){
+
+		ArrayList<String> possibleDestinations = this.getPossibleMoveDestinations(xPosStart, yPosStart, board, owner);
+		String destPoint = xPosEnd+","+yPosEnd;
+		
 		//Prüfung
 		for(String item: possibleDestinations){
-			System.out.println(item);
 			if(item.equals(destPoint)){
 				return true;
 			}
 		}
-
 		return false;
 	}
+	
+	public boolean hitPossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd, Piece[][] board, boolean owner){
+		
+		ArrayList<String> possibleDestinations = this.getPossibleHitDestinations(xPosStart, yPosStart, board, owner);
+		String destPoint = xPosEnd+","+yPosEnd;
+
+		//Prüfung
+		for(String item: possibleDestinations){
+			if(item.equals(destPoint)){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public Pawn(String color, int count) {
 		
 		if(color.equalsIgnoreCase("weiß")){
