@@ -1,8 +1,15 @@
 package controller;
 
+import java.util.ArrayList;
+
+import pieces.Bishop;
 import pieces.King;
+import pieces.Knight;
+import pieces.Pawn;
 import pieces.Piece;
+import pieces.Queen;
 import pieces.Rock;
+import players.Player;
 
 
 public class Analyser {
@@ -36,6 +43,104 @@ public class Analyser {
 		return pos;
 		
 	}
+	
+	public boolean whosTurn(Player[] playersInGame){
+		if(playersInGame[0].isOnTurn()){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public boolean testIfEnemy(boolean owner, int xPos, int yPos, Piece[][] board){
+		
+		if(board[yPos][xPos].isOwner()!=owner){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public boolean testIfEmpty(int xPos, int yPos, Piece[][] board){
+		if(board[yPos][xPos].getSymbol().equals("  ")){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public boolean testIfKingIsHere(Piece[][]board, ArrayList<String> possMoves, boolean owner){
+		String kingField ="";
+		//Suche nach weissem König
+		if(owner){
+			for(int i=0; i<=7; i++){
+				for(int j=0; j<=7 ; j++){
+					if(board[i][j] instanceof King && board[i][j].isOwner()==true){
+						kingField = j+","+i;
+					}
+				}
+			}
+		}else{
+			for(int i=0; i<=7; i++){
+				for(int j=0; j<=7 ; j++){
+					if(board[i][j] instanceof King && board[i][j].isOwner()==false){
+						kingField = j+","+i;
+					}
+				}
+			}
+		}
+		for(String item: possMoves){
+			if(item.equals(kingField)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean testIfOwnerPutsInCheck(Piece[][] board, boolean owner){
+		
+		//Durchlauf des Bretts
+		for(int i=0; i<=7; i++){
+			for(int j=0; j<=7 ; j++){
+				if(board[i][j].isOwner()==owner){
+					if(board[i][j] instanceof Queen){
+						Queen queen = (Queen) board[i][j];
+						ArrayList<String> possMoves = queen.getPossibleMoveDestinations(queen.getPositionX(), queen.getPositionY(), board);
+						if(this.testIfKingIsHere(board, possMoves, !owner)){
+							return true;
+						}
+					}else if(board[i][j] instanceof Bishop){
+						Bishop bishop = (Bishop) board[i][j];
+						ArrayList<String> possMoves = bishop.getPossibleMoveDestinations(bishop.getPositionX(), bishop.getPositionY(), board);
+						if(this.testIfKingIsHere(board, possMoves, !owner)){
+							return true;
+						}
+					}else if(board[i][j] instanceof Knight){
+						Knight knight = (Knight) board[i][j];
+						ArrayList<String> possMoves = knight.getPossibleMoveDestinations(knight.getPositionX(), knight.getPositionY());
+						if(this.testIfKingIsHere(board, possMoves, !owner)){
+							return true;
+						}
+					}else if(board[i][j] instanceof Rock){
+						Rock rock = (Rock) board[i][j];
+						ArrayList<String> possMoves = rock.getPossibleMoveDestinations(rock.getPositionX(), rock.getPositionY(), board);
+						if(this.testIfKingIsHere(board, possMoves, !owner)){
+							return true;
+						}
+					}else if(board[i][j] instanceof Pawn){
+						Pawn pawn = (Pawn) board[i][j];
+						ArrayList<String> possMoves = pawn.getPossibleHitDestinations(pawn.getPositionX(), pawn.getPositionY(), board, pawn.isOwner());
+						if(this.testIfKingIsHere(board, possMoves, !owner)){
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+
 	
 	public boolean rochadeShortPossible(boolean owner, Piece[][] board){
 		//Weiß
