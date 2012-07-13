@@ -7,6 +7,9 @@
   <void property="name">
    <string>Spieler 1</string>
   </void>
+  <void property="onTurn">
+   <boolean>true</boolean>
+  </void>
   <void property="owner">
    <boolean>true</boolean>
   </void>
@@ -17,9 +20,6 @@
   </void>
   <void property="name">
    <string>Spieler 2</string>
-  </void>
-  <void property="onTurn">
-   <boolean>true</boolean>
   </void>
  </object>
 </java>

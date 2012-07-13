@@ -133,10 +133,7 @@
    <string>-P</string>
   </void>
  </object>
- <object class="pieces.Pawn">
-  <void property="color">
-   <string>Schwarz</string>
-  </void>
+ <object class="pieces.Piece">
   <void property="positionX">
    <int>3</int>
   </void>
@@ -144,7 +141,7 @@
    <int>1</int>
   </void>
   <void property="symbol">
-   <string>-P</string>
+   <string>  </string>
   </void>
  </object>
  <object class="pieces.Piece">
@@ -230,7 +227,10 @@
    <string>  </string>
   </void>
  </object>
- <object class="pieces.Piece">
+ <object class="pieces.Pawn">
+  <void property="color">
+   <string>Schwarz</string>
+  </void>
   <void property="positionX">
    <int>3</int>
   </void>
@@ -238,10 +238,13 @@
    <int>2</int>
   </void>
   <void property="symbol">
-   <string>  </string>
+   <string>-P</string>
   </void>
  </object>
- <object class="pieces.Piece">
+ <object class="pieces.Pawn">
+  <void property="color">
+   <string>Schwarz</string>
+  </void>
   <void property="positionX">
    <int>4</int>
   </void>
@@ -249,7 +252,7 @@
    <int>2</int>
   </void>
   <void property="symbol">
-   <string>  </string>
+   <string>-P</string>
   </void>
  </object>
  <object class="pieces.Piece">
@@ -326,10 +329,7 @@
    <string>  </string>
   </void>
  </object>
- <object class="pieces.Pawn">
-  <void property="color">
-   <string>Schwarz</string>
-  </void>
+ <object class="pieces.Piece">
   <void property="positionX">
    <int>4</int>
   </void>
@@ -337,7 +337,7 @@
    <int>3</int>
   </void>
   <void property="symbol">
-   <string>-P</string>
+   <string>  </string>
   </void>
  </object>
  <object class="pieces.Piece">
@@ -373,18 +373,12 @@
    <string>  </string>
   </void>
  </object>
- <object class="pieces.Pawn">
-  <void property="color">
-   <string>Weiß</string>
-  </void>
-  <void property="owner">
-   <boolean>true</boolean>
-  </void>
+ <object class="pieces.Piece">
   <void property="positionY">
    <int>4</int>
   </void>
   <void property="symbol">
-   <string> P</string>
+   <string>  </string>
   </void>
  </object>
  <object class="pieces.Piece">
@@ -470,12 +464,18 @@
    <string>  </string>
   </void>
  </object>
- <object class="pieces.Piece">
+ <object class="pieces.Pawn">
+  <void property="color">
+   <string>Weiß</string>
+  </void>
+  <void property="owner">
+   <boolean>true</boolean>
+  </void>
   <void property="positionY">
    <int>5</int>
   </void>
   <void property="symbol">
-   <string>  </string>
+   <string> P</string>
   </void>
  </object>
  <object class="pieces.Piece">

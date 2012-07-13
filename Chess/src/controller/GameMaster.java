@@ -1,5 +1,6 @@
 package controller;
 
+import gui.Board;
 import gui.Viewer;
 
 import java.io.File;
@@ -265,6 +266,9 @@ public class GameMaster {
         }else{
         	System.out.println("Spieler 2 - Schwarz ist am Zug");
         }
+        new Board(board);
+        	
+        
 		chef.listenUser();
 			
 	}
