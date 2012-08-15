@@ -1,4 +1,4 @@
-package pieces;
+package main.java.pieces;
 
 import java.util.ArrayList;
 
@@ -173,11 +173,12 @@ public class Pawn extends Piece{
 			this.setColor("Schwarz");
 			this.setPositionY(1);
 		}
+		this.setType("Pawn");
 		
 	}
 	
 	public Pawn(){
-		
+	
 	}
 
 }

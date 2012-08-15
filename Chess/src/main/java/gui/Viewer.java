@@ -1,6 +1,6 @@
-package gui;
+package main.java.gui;
 
-import pieces.*;
+import main.java.pieces.*;
 
 public class Viewer {
 	

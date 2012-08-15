@@ -1,4 +1,4 @@
-package controller;
+package main.java.controller;
 
 
 import java.beans.XMLDecoder;
@@ -6,9 +6,10 @@ import java.beans.XMLEncoder;
 import java.io.*;
 import java.util.ArrayList;
 
+import main.java.pieces.Piece;
+import main.java.players.Player;
 
-import pieces.Piece;
-import players.Player;
+
 
 
 public class Saver {

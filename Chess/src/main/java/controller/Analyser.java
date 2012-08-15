@@ -1,15 +1,16 @@
-package controller;
+package main.java.controller;
 
 import java.util.ArrayList;
 
-import pieces.Bishop;
-import pieces.King;
-import pieces.Knight;
-import pieces.Pawn;
-import pieces.Piece;
-import pieces.Queen;
-import pieces.Rock;
-import players.Player;
+import main.java.pieces.Bishop;
+import main.java.pieces.King;
+import main.java.pieces.Knight;
+import main.java.pieces.Pawn;
+import main.java.pieces.Piece;
+import main.java.pieces.Queen;
+import main.java.pieces.Rock;
+import main.java.players.Player;
+
 
 
 public class Analyser {

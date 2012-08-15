@@ -1,9 +1,10 @@
-package controller;
+package main.java.controller;
 
 import java.util.ArrayList;
 
-import pieces.*;
-import players.Player;
+import main.java.pieces.*;
+import main.java.players.Player;
+
 
 public class Controller {
 	

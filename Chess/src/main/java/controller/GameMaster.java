@@ -1,13 +1,14 @@
-package controller;
+package main.java.controller;
 
-import gui.Board;
-import gui.Viewer;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import pieces.*;
-import players.Player;
+import main.java.gui.Board;
+import main.java.gui.Viewer;
+import main.java.pieces.*;
+import main.java.players.Player;
+
 
 public class GameMaster {
 	

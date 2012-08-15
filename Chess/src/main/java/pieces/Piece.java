@@ -1,4 +1,4 @@
-package pieces;
+package main.java.pieces;
 
 public class Piece {
 	
@@ -7,6 +7,7 @@ public class Piece {
 	private int positionY;
 	private String symbol;
 	private String color;
+	private String type;
 	
 	public String getColor() {
 		return color;
@@ -42,6 +43,12 @@ public class Piece {
 	
 	public Piece(){
 		
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

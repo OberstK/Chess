@@ -1,4 +1,4 @@
-package pieces;
+package main.java.pieces;
 
 import java.util.ArrayList;
 
@@ -114,7 +114,7 @@ public class Bishop extends Piece{
 			this.setColor("Schwarz");
 			this.setPositionY(0);
 		}
-		
+		this.setType("Bishop");
 		
 	}
 	public Bishop(){

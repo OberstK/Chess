@@ -1,4 +1,4 @@
-package pieces;
+package main.java.pieces;
 
 import java.util.ArrayList;
 
@@ -119,12 +119,12 @@ public class Knight extends Piece{
 			this.setPositionY(0);
 		}
 		
-		
+		this.setType("Knight");
 	
 	}
 	
 	public Knight(){
-		
+		this.setType("Knight");
 	}
 
 }

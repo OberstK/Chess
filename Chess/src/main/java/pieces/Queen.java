@@ -1,29 +1,10 @@
-package pieces;
+package main.java.pieces;
 
 import java.util.ArrayList;
 
-public class Rock extends Piece{
+public class Queen extends Piece{
 	
-	private int count;
-	private boolean rochade;
-
-	public boolean isRochade() {
-		return rochade;
-	}
-
-	public void setRochade(boolean rochade) {
-		this.rochade = rochade;
-	}
-
-	public int getCount() {
-		return count;
-	}
-
-	public void setCount(int count) {
-		this.count = count;
-	}
-	
-	public ArrayList<String> getPossibleMoveDestinations(int xPosStart, int yPosStart, Piece[][]board){
+	public ArrayList<String> getPossibleMoveDestinations(int xPosStart, int yPosStart, Piece[][] board){
 		ArrayList<String> possibleDestinations = new ArrayList<String>();
 		
 		//nach rechts, selbe Zeile
@@ -77,59 +58,108 @@ public class Rock extends Piece{
 						}
 					}
 				}
+				
+				//schräg rechts oben
+				for(int i=1; i<=7;i++){
+					int yPosTest = yPosStart+i;
+					int xPosTest = xPosStart+i;
+					if(yPosTest<=7 && xPosTest<=7){
+						if(board[yPosTest][xPosTest].getSymbol().equals("  ")){
+							possibleDestinations.add(xPosTest+","+yPosTest);
+						}else{
+							possibleDestinations.add(xPosTest+","+yPosTest);
+							i=8;
+						}
+					}
+				}
+				//schräg rechts unten
+				for(int i=1; i<=7;i++){
+					int yPosTest = yPosStart-i;
+					int xPosTest = xPosStart+i;
+					if(yPosTest>=0 && xPosTest<=7){
+						if(board[yPosTest][xPosTest].getSymbol().equals("  ")){
+							possibleDestinations.add(xPosTest+","+yPosTest);
+						}else{
+							possibleDestinations.add(xPosTest+","+yPosTest);
+							i=8;
+						}
+					}
+				}
+				//schräg links oben
+				for(int i=1; i<=7;i++){
+					int yPosTest = yPosStart+i;
+					int xPosTest = xPosStart-i;
+					if(yPosTest<=7 && xPosTest>=0){
+						if(board[yPosTest][xPosTest].getSymbol().equals("  ")){
+							possibleDestinations.add(xPosTest+","+yPosTest);
+						}else{
+							possibleDestinations.add(xPosTest+","+yPosTest);
+							i=8;
+						}
+					}
+				}
+				//schräg links unten
+				for(int i=1; i<=7;i++){
+					int yPosTest = yPosStart-i;
+					int xPosTest = xPosStart-i;
+					if(yPosTest>=0 && xPosTest>=0){
+						if(board[yPosTest][xPosTest].getSymbol().equals("  ")){
+							possibleDestinations.add(xPosTest+","+yPosTest);
+						}else{
+							possibleDestinations.add(xPosTest+","+yPosTest);
+							i=8;
+						}
+					}
+				}
 		
 		return possibleDestinations;
+		
 	}
 	
-	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd, Piece[][]board){
-		
+	public boolean movePossible(int xPosStart, int yPosStart, int xPosEnd, int yPosEnd, Piece[][] board){
 		ArrayList<String> possibleDestinations = this.getPossibleMoveDestinations(xPosStart, yPosStart, board);
 		String destPoint = xPosEnd+","+yPosEnd;
-		
+
 		//Prüfung
 		for(String item: possibleDestinations){
 			if(item.equals(destPoint)){
 				return true;
 			}
 		}
+		
 		return false;
 	}
-
-	public Rock(String color, int count){
-		this.setRochade(true);
+	
+	public Queen(String color){
 		
 		if(color.equalsIgnoreCase("weiß")){
 			this.setOwner(true);
-			this.setSymbol(" R");
+			this.setSymbol(" Q");
 		}else if(color.equalsIgnoreCase("schwarz")){
 			this.setOwner(false);
-			this.setSymbol("-R");
+			this.setSymbol("-Q");
 		}else{
 			System.out.println("Farbe nicht bekannt!");
 		}
 		
-		if(count==1){
-			this.setPositionX(0);			
-		}else if(count==2){
-			this.setPositionX(7);
-		}else{
-			System.out.println("Anzahl undefiniert!");
-		}
-		
+
 		if(this.isOwner()==true){
 			this.setColor("Weiß");
+			this.setPositionX(3);
 			this.setPositionY(7);
 			
 		}else{
 			this.setColor("Schwarz");
+			this.setPositionX(3);
 			this.setPositionY(0);
 		}
 		
+		this.setType("Queen");
 		
 	}
 	
-	public Rock(){
-		
+	public Queen(){
+	
 	}
 
 }
