@@ -41,7 +41,6 @@ public class Square extends JPanel{
         g.setFont(font);
         g.setColor(Color.WHITE);
         g.drawString(piece,x, y);// Draw the string.
-        
     }
 
 	public String getPiece() {
