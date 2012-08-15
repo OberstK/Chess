@@ -1,5 +1,6 @@
 package main.java.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.BorderFactory;
@@ -15,6 +16,7 @@ public class Square extends JPanel{
     public Square() {
         Border blackline = BorderFactory.createLineBorder(Color.black);
         setBorder(blackline);
+        this.setLayout(new BorderLayout());
     }
      
     public void paintComponent(Graphics g) {
