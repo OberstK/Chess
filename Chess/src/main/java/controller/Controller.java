@@ -13,7 +13,7 @@ public class Controller {
 	//Hole Figur an dieser Position
 	public Piece getPieceOnBoard(int letter, int num, Piece[][] board){
 		int colPos = letter;
-		int rowPos = num-1;
+		int rowPos = num;
 		
 		if(board[rowPos][colPos].getSymbol().equals("  ")){
 			return null;
@@ -97,6 +97,22 @@ public class Controller {
 		board[zeile][spalte] = this.fillEmptySpot(spalte, zeile);
 	}
 	
+	public Player getPlayerOnTurn(Player[] playersInGame){
+		if(playersInGame[0].isOnTurn()){
+			return playersInGame[0];
+		}else{
+			return playersInGame[1];
+		}
+	}
+	
+	public Player getPlayerNotOnTurn(Player[] playersInGame){
+		if(playersInGame[0].isOnTurn()){
+			return playersInGame[1];
+		}else{
+			return playersInGame[0];
+		}
+	}
+	
 	//Wechsel den "Dran"-Status der Spieler
 	public void changePlayers(Player[] playersInGame){
 		//Spieler wechseln
@@ -133,6 +149,32 @@ public class Controller {
 		return noPiece;
 	}
 	
+	public ArrayList<String> getPositionOfPosDestSquares(Piece piece, int x, int y, Piece[][] board, boolean owner){
+		ArrayList<String> moves = new ArrayList<String>();
+		
+		if(piece instanceof Pawn){
+			Pawn pawn = (Pawn) piece;
+			moves = pawn.getPossibleMoveDestinations(x, y, board, owner);	
+		}else if(piece instanceof Knight){
+			Knight knight = (Knight) piece;
+			moves = knight.getPossibleMoveDestinations(x, y);
+		}else if(piece instanceof Queen){
+			Queen queen = (Queen) piece;
+			moves = queen.getPossibleMoveDestinations(x, y, board);
+		}else if(piece instanceof Bishop){
+			Bishop bishop = (Bishop) piece;
+			moves = bishop.getPossibleMoveDestinations(x, y, board);
+		}else if(piece instanceof Rock){
+			Rock rock = (Rock) piece;
+			moves = rock.getPossibleMoveDestinations(x, y, board);
+		}else if(piece instanceof King){
+			King king = (King) piece;
+			moves = king.getPossibleMoveDestinations(x, y);
+		}
+		
+		return moves;
+	}
+	
 	/*Bewege eine Figur von seiner Startposition zu seiner Zielposition
 	 * Diverse Prüfungen finden statt
 	 */
@@ -143,7 +185,7 @@ public class Controller {
 		
 		//Start und Endposition holen und in Integers wandeln
 		int xPosEnd = letter;
-		int yPosEnd = num-1; //weil Array bei 0 anfängt, aber Schachbrett bei 1
+		int yPosEnd = num; //weil Array bei 0 anfängt, aber Schachbrett bei 1
 		int xPosStart = figur.getPositionX();
 		int yPosStart = figur.getPositionY();
 		
@@ -327,10 +369,6 @@ public class Controller {
 	}
 	
 
-	
-
-
-	
 	public Controller(){
 		analyse = new Analyser();
 	}

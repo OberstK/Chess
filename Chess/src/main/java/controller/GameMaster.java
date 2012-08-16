@@ -1,10 +1,23 @@
 package main.java.controller;
 
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
+
 import main.java.gui.Board;
+import main.java.gui.ChessPiece;
+import main.java.gui.Square;
 import main.java.gui.Viewer;
 import main.java.pieces.*;
 import main.java.players.Player;
@@ -12,11 +25,16 @@ import main.java.players.Player;
 
 public class GameMaster {
 	
-	private final Viewer viewer;
+	private final Board _view;
 	private final CommandListener listener;
 	private final Saver saver;
 	private final Analyser analyse;
 	private final Controller control;
+	private int xAdjustment;
+	private int yAdjustment;
+	private ChessPiece chessPiece;
+	private Square startPanel;
+	private Square endPanel;
 	
 	
 	public static Piece[][] board = new Piece[8][8];
@@ -41,13 +59,141 @@ public class GameMaster {
 		return saver.loadPlayersFromXML();
 	}
 	
-	private void resetBoard() {
+	public void resetBoard() {
 		board = control.generateBoard();	
 	}
 
-	private void startGame() {
+	public void startGame() {
 		playersInGame = control.generatePlayers();
 	}
+	
+	
+	class MyMouseListener implements MouseListener{
+		
+		
+		
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {}
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+		@Override
+		public void mouseExited(MouseEvent e) {}
+		@Override
+		public void mousePressed(MouseEvent e) {
+			chessPiece = null;
+			Component c =  _view.getChessBoard().findComponentAt(e.getX(), e.getY());
+	 
+			if (c instanceof JPanel) return;
+			Point startLocation = c.getParent().getLocation();
+			xAdjustment = startLocation.x - e.getX();
+			yAdjustment = startLocation.y - e.getY();
+			startPanel = (Square) c.getParent();
+			int xViewStart = startPanel.getxPos();
+			int yViewStart = startPanel.getyPos();
+			
+			for(String entry: control.getPositionOfPosDestSquares(control.getPieceOnBoard(xViewStart, yViewStart , board), xViewStart, yViewStart, board, control.getPlayerOnTurn(playersInGame).isOwner())){
+				String[] parts = entry.split(",");
+		        parts[0] = parts[0].trim();
+				parts[1] = parts[1].trim();
+				int xOut = Integer.parseInt(parts[0]);
+				int yOut = Integer.parseInt(parts[1]);
+				_view.findSquareByPos(xOut, yOut).setBackground(Color.GREEN);
+			}
+			
+
+			//Prüfe ob Figur an dieser Stelle
+			if(analyse.testIfEmpty(xViewStart, yViewStart, board)){
+				System.out.println("Keine Figur an dieser Stelle!");
+			//Prüfe ob eigene Figur
+			}else if(analyse.testIfEnemy(control.getPlayerOnTurn(playersInGame).isOwner(), xViewStart, yViewStart, board)){
+				System.out.println("Das ist keine von deinen Figuren!");
+			//Sonst bewegen
+			}else{
+				chessPiece = (ChessPiece) c;
+				 int x = e.getX() + xAdjustment;
+				 int y = e.getY() + yAdjustment;
+				_view.movePiece(chessPiece, x, y);
+				_view.getFenster().add(chessPiece, JLayeredPane.DRAG_LAYER);
+			}
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			if (chessPiece == null) return;
+			 
+			chessPiece.setVisible(false);
+			Component c =  _view.getChessBoard().findComponentAt(e.getX(), e.getY());
+			
+			int xViewStart = startPanel.getxPos();
+			int yViewStart = startPanel.getyPos();
+			
+			if (c instanceof JLabel)
+			{
+				Container parent = c.getParent();
+				endPanel = (Square) parent;
+				int xViewEnd = endPanel.getxPos();
+				int yViewEnd = endPanel.getyPos();
+				if(control.bewegeFigur(control.getPieceOnBoard(xViewStart, yViewStart , board), xViewEnd, yViewEnd, board, outPieces)){
+					if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner())){
+						System.out.println("Nach dem Zug stehst du im Schach!");
+					}
+					parent.remove(0);
+					parent.add(chessPiece);
+					control.changePlayers(playersInGame);
+				}else{
+					startPanel.add(chessPiece);
+				}
+			}
+			else
+			{
+				Container parent = (Container)c;
+				endPanel = (Square) parent;
+				int xViewEnd = endPanel.getxPos();
+				int yViewEnd = endPanel.getyPos();
+				if(control.bewegeFigur(control.getPieceOnBoard(xViewStart, yViewStart , board), xViewEnd, yViewEnd, board, outPieces)){
+					parent.add(chessPiece);
+					control.changePlayers(playersInGame);
+				}else{
+					startPanel.add(chessPiece);
+				}
+			}
+			chessPiece.setVisible(true);
+			
+			
+			//Prüfe auf Schachmatt des Spielers der jetzt dran ist
+			if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner()) && control.testMovesForCheckMate(control.getPlayerOnTurn(playersInGame).isOwner(), board)){
+				System.out.println(control.getPlayerNotOnTurn(playersInGame).getColor()+" setzt "+control.getPlayerOnTurn(playersInGame).getColor()+" Schachmatt!");
+				//gameEnded = true;
+			}
+			
+			//Prüfe auf Schach des Spielers der jetzt dran ist
+			if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner())){
+				System.out.println("Schach!");
+			}
+		}
+	}
+	
+	class MyMouseMoveListener implements MouseMotionListener{
+		
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			if (chessPiece == null) return;
+			 int x = e.getX() + xAdjustment;
+			 int y = e.getY() + yAdjustment;
+			 _view.movePiece(chessPiece, x, y);
+		}
+		@Override
+		public void mouseMoved(MouseEvent e) {}
+
+	}
+	
+	public void addListener(){
+		this._view.setMouseListen(new MyMouseListener());
+		this._view.setMouseMoveListen(new MyMouseMoveListener());
+	}
+	
 	
 	public void listenUser(){
 
@@ -82,13 +228,13 @@ public class GameMaster {
 			//Prüfe ob Figur an dieser Stelle
 			if(control.getPieceOnBoard(sLetter, sNum, board)==null){
 				System.out.println("Keine Figur an dieser Stelle!");
-				viewer.zeigeSpielBrett(board);
+				//viewer.zeigeSpielBrett(board);
 				this.listenUser();
 				
 			//Prüfe ob eigene Figur
 			}else if(control.getPieceOnBoard(sLetter, sNum, board).isOwner()!=playerOnTurn.isOwner()){
 				System.out.println("Das ist keine von deinen Figuren!");
-				viewer.zeigeSpielBrett(board);
+				//viewer.zeigeSpielBrett(board);
 				this.listenUser();
 			
 			//ist eigene und vorhandene Figur, führe Zug durch
@@ -143,20 +289,20 @@ public class GameMaster {
 						playersInGame[1] = playerOnTurn;
 					}
 				}else{
-					viewer.zeigeSpielBrett(board);
+					//viewer.zeigeSpielBrett(board);
 					this.listenUser();
 				}
 				
 				if(gameEnded){
 					System.out.println(playerOnTurn.getName()+" hat gewonnen! Programm wird beendet");
-					viewer.zeigeSpielBrett(board);
+					//viewer.zeigeSpielBrett(board);
 				}else{
 					if(reverse){
-						viewer.zeigeSpielBrett(board);
+						//viewer.zeigeSpielBrett(board);
 						this.listenUser();
 					}else{
 						control.changePlayers(playersInGame);
-						viewer.zeigeSpielBrett(board);
+						//viewer.zeigeSpielBrett(board);
 						this.listenUser();
 					}
 				}
@@ -189,7 +335,7 @@ public class GameMaster {
 			}else{
 				System.out.println("kurze Rochade nicht möglich. Figuren im Weg oder an falscher Position!");
 			}
-			viewer.zeigeSpielBrett(board);
+			//viewer.zeigeSpielBrett(board);
 			this.listenUser();
 			
 		}else if(command.getCommand().equals(CommandConst.RL)){
@@ -208,7 +354,7 @@ public class GameMaster {
 			}else{
 				System.out.println("lange Rochade nicht möglich. Figuren im Weg oder an falscher Position!");
 			}
-			viewer.zeigeSpielBrett(board);
+			//viewer.zeigeSpielBrett(board);
 			this.listenUser();
 			
 		}else if(command.getCommand().equals(CommandConst.EXIT)){
@@ -222,7 +368,7 @@ public class GameMaster {
 			this.resetBoard();
 			this.startGame();
 			System.out.println("Neues Spiel gestartet");
-			viewer.zeigeSpielBrett(board);
+			//viewer.zeigeSpielBrett(board);
 			this.listenUser();
 			
 		}else if(command.getCommand().equals(CommandConst.ERR)){
@@ -236,41 +382,35 @@ public class GameMaster {
 	}
 	
 	public GameMaster(){
-		viewer = new Viewer();
-		listener = new CommandListener();
 		saver = new Saver();
 		analyse = new Analyser();
 		control = new Controller();
+		if (new File("Board.xml").exists() && new File("Players.xml").exists()) {
+        	System.out.println("Gespeichertes Spiel gefunden. Lade...");
+        	board = this.loadBoard();
+        	playersInGame = this.loadPlayers();
+        	System.out.println("Spiel geladen.");
+        	//view.zeigeSpielBrett(board);
+        } else {
+        	System.out.println("Kein gespeichertes Spiel gefunden. Beginne Neues...");
+        	this.startGame();
+        	this.resetBoard();
+        	System.out.println("Neues Spiel gestartet. Viel Spass.");
+        	//view.zeigeSpielBrett(board);
+        }
+		String dran = control.getPlayerOnTurn(playersInGame).getName();
+		String dranColor = control.getPlayerOnTurn(playersInGame).getColor();
+		System.out.println(dran+" - "+dranColor+" ist dran!");
+		_view = new Board(board);
+		addListener();
+		listener = new CommandListener();
+
 	}
 	
 	public static void main(String[] args) {
 		
-		GameMaster chef = new GameMaster();
-		Viewer view = new Viewer();
+		new GameMaster();
 		
-        if (new File("Board.xml").exists() && new File("Players.xml").exists()) {
-        	System.out.println("Gespeichertes Spiel gefunden. Lade...");
-        	board = chef.loadBoard();
-        	playersInGame = chef.loadPlayers();
-        	System.out.println("Spiel geladen.");
-        	view.zeigeSpielBrett(board);
-        } else {
-        	System.out.println("Kein gespeichertes Spiel gefunden. Beginne Neues...");
-        	chef.startGame();
-        	chef.resetBoard();
-        	System.out.println("Neues Spiel gestartet. Viel Spass.");
-        	view.zeigeSpielBrett(board);
-        }
-		
-        if(playersInGame[0].isOnTurn()){
-        	System.out.println("Spieler 1 - Weiß ist am Zug");
-        }else{
-        	System.out.println("Spieler 2 - Schwarz ist am Zug");
-        }
-        new Board(board);
-        	
-        
-		chef.listenUser();
 			
 	}
 }

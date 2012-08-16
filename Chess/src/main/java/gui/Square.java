@@ -11,9 +11,13 @@ public class Square extends JPanel{
 	
 
 	private static final long serialVersionUID = 1L;
+	private int xPos;
+	private int yPos;
 
 
-    public Square() {
+    public Square(int xPos, int yPos) {
+    	this.setxPos(xPos);
+    	this.setyPos(yPos);
         Border blackline = BorderFactory.createLineBorder(Color.black);
         setBorder(blackline);
         this.setLayout(new BorderLayout());
@@ -23,5 +27,21 @@ public class Square extends JPanel{
         super.paintComponent(g);
         
     }
+
+	public int getyPos() {
+		return yPos;
+	}
+
+	public void setyPos(int yPos) {
+		this.yPos = yPos;
+	}
+
+	public int getxPos() {
+		return xPos;
+	}
+
+	public void setxPos(int xPos) {
+		this.xPos = xPos;
+	}
 
 }

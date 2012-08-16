@@ -63,7 +63,7 @@ public class Analyser {
 	}
 	
 	public boolean testIfEmpty(int xPos, int yPos, Piece[][] board){
-		if(board[yPos][xPos].getSymbol().equals("  ")){
+		if(board[yPos][xPos].getType()==null){
 			return true;
 		}else{
 			return false;
