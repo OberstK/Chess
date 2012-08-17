@@ -9,11 +9,12 @@ import main.java.players.Player;
 public class Controller {
 	
 	private final Analyser analyse;
+	public static Piece[][] lastBoard = new Piece[8][8];
 	
 	//Hole Figur an dieser Position
-	public Piece getPieceOnBoard(int letter, int num, Piece[][] board){
-		int colPos = letter;
-		int rowPos = num;
+	public Piece getPieceOnBoard(int x, int y, Piece[][] board){
+		int colPos = x;
+		int rowPos = y;
 		
 		if(board[rowPos][colPos].getSymbol().equals("  ")){
 			return null;
@@ -21,7 +22,7 @@ public class Controller {
 		return board[rowPos][colPos];
 	}
 	
-	//Hole den jeweiligen König
+	//Hole den jeweiligen KÃ¶nig
 	public King getKingOnBoard(boolean owner, Piece[][] board){
 		King king = new King();
 		
@@ -44,7 +45,6 @@ public class Controller {
 	public void putPieceOnBoard(Piece figur, Piece[][] board){
 		int xPos = figur.getPositionX();
 		int yPos = figur.getPositionY();
-		
 		board[yPos][xPos]= figur;
 	}
 	
@@ -52,17 +52,17 @@ public class Controller {
 	public Piece[][] generateBoard(){
 		ArrayList<Piece> figuren = new ArrayList<Piece>();
 		Piece[][] newBoard = new Piece[8][8];
-		//Weiße Figuren
-		figuren.add(new King("weiß"));
-		figuren.add(new Queen("weiß"));
-		figuren.add(new Knight("weiß", 1));
-		figuren.add(new Knight("weiß", 2));
-		figuren.add(new Bishop("weiß", 1));
-		figuren.add(new Bishop("weiß", 2));
-		figuren.add(new Rock("weiß", 1));
-		figuren.add(new Rock("weiß", 2));
+		//Weisse Figuren
+		figuren.add(new King("weiss"));
+		figuren.add(new Queen("weiss"));
+		figuren.add(new Knight("weiss", 1));
+		figuren.add(new Knight("weiss", 2));
+		figuren.add(new Bishop("weiss", 1));
+		figuren.add(new Bishop("weiss", 2));
+		figuren.add(new Rock("weiss", 1));
+		figuren.add(new Rock("weiss", 2));
 		for(int i=0; i<8; i++){
-			figuren.add(new Pawn("weiß", i));
+			figuren.add(new Pawn("weiss", i));
 		}
 		
 		//Schwarze Figuren
@@ -83,7 +83,7 @@ public class Controller {
 			this.putPieceOnBoard(figur, newBoard);
 		}
 		
-		//Leere Felder füllen
+		//Leere Felder fÃ¼llen
 		for(int i=2; i<=5; i++){
 			for(int j=0; j<=7;j++){
 				newBoard[i][j] = this.fillEmptySpot(j, i);
@@ -126,7 +126,7 @@ public class Controller {
 		}
 	}
 	
-	//Erzeuge die Spieler für ein neues Spiel
+	//Erzeuge die Spieler fÃ¼r ein neues Spiel
 	public Player[] generatePlayers(){
 		Player[] players = new Player[2];
 		//Spieler 1
@@ -175,21 +175,24 @@ public class Controller {
 		return moves;
 	}
 	
+	
+	
 	/*Bewege eine Figur von seiner Startposition zu seiner Zielposition
-	 * Diverse Prüfungen finden statt
+	 * Diverse PrÃ¼fungen finden statt
 	 */
-	public boolean bewegeFigur(Piece figur, int letter, int num, Piece[][] board, ArrayList<Piece> outPieces){
-		//Initiierung von Variablen zur Überprüfung des Zuges
+	public boolean bewegeFigur(Piece figur, int xPosEnd, int yPosEnd, Piece[][] board, ArrayList<Piece> outPieces){
+		//Initiierung von Variablen zur ÃœberprÃ¼fung des Zuges
 		boolean success= false;
 		boolean test = false;
 		
-		//Start und Endposition holen und in Integers wandeln
-		int xPosEnd = letter;
-		int yPosEnd = num; //weil Array bei 0 anfängt, aber Schachbrett bei 1
+		//Zwischenspeicherung des Boards
+		lastBoard = board;
+		
+		//Start und Endposition holen
 		int xPosStart = figur.getPositionX();
 		int yPosStart = figur.getPositionY();
 		
-		//Prüfung ob Bauer und ob Zug möglich ist
+		//PrÃ¼fung ob Bauer und ob Zug mÃ¶glich ist
 		if(figur instanceof Pawn){
 			Pawn pawn = (Pawn) figur;
 			if(pawn.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board, pawn.isOwner())){
@@ -197,31 +200,31 @@ public class Controller {
 			}else if(pawn.hitPossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board, pawn.isOwner())){
 				test = true;
 			}
-		//Prüfung ob Springer und ob Zug möglich ist
+		//PrÃ¼fung ob Springer und ob Zug mÃ¶glich ist
 		}else if(figur instanceof Knight){
 			Knight knight = (Knight) figur;
 			if(knight.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd)){
 				test = true;
 			}
-		//Prüfung ob Königin und ob Zug möglich ist
+		//PrÃ¼fung ob KÃ¶nigin und ob Zug mÃ¶glich ist
 		}else if(figur instanceof Queen){
 			Queen queen = (Queen) figur;
 			if(queen.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board)){
 				test = true;
 			}
-		//Prüfung ob Läufer und ob Zug möglich ist
+		//PrÃ¼fung ob LÃ¤ufer und ob Zug mÃ¶glich ist
 		}else if(figur instanceof Bishop){
 			Bishop bishop = (Bishop) figur;
 			if(bishop.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board)){
 				test = true;
 			}
-		//Prüfung ob Turm und ob Zug möglich ist
+		//PrÃ¼fung ob Turm und ob Zug mÃ¶glich ist
 		}else if(figur instanceof Rock){
 			Rock rock = (Rock) figur;
 			if(rock.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board)){
 				test=true;
 			}
-		//Prüfung ob König und ob Zug möglich ist
+		//PrÃ¼fung ob KÃ¶nig und ob Zug mÃ¶glich ist
 		}else if(figur instanceof King){
 			King king = (King) figur;
 			if(king.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd)){
@@ -247,72 +250,72 @@ public class Controller {
 				this.putPieceOnBoard(figur, board);		
 				success=true;
 				return success;
-			//Wenn belegt -> Gib false zurück
+			//Wenn belegt -> Gib false zurÃ¼ck
 			}else{
 				System.out.println("Feld belegt!");
 				success=false;
 				return success;
 			}
 		}else{
-			//Wenn obige Prüfungen auf Figur fehlschlagen, ist der Zug nicht möglich (Regeln verletzt, etc.)
-			System.out.println("Dieser Zug ist nicht gültig!");
+			//Wenn obige PrÃ¼fungen auf Figur fehlschlagen, ist der Zug nicht mÃ¶glich (Regeln verletzt, etc.)
+			System.out.println("Dieser Zug ist nicht gÃ¼ltig!");
 			success=false;
 			return success;
 		}
 	}
 	
-	//Führt eine kurze Rochade durch -> nimmt Farbe als Wert an
+	//FÃ¼hrt eine kurze Rochade durch -> nimmt Farbe als Wert an
 	public void doKurzeRochade(boolean owner, Piece[][] board){
-		//Prüfung ob Weiß oder Schwarz, verändert die beteiligte Zeile
+		//PrÃ¼fung ob Weiss oder Schwarz, verÃ¤ndert die beteiligte Zeile
 		int i;
 		if(owner){
 			i=7;
 		}else{
 			i=0;
 		}
-		//Holt beteiligten König und Turm
+		//Holt beteiligten KÃ¶nig und Turm
 		Rock rock = (Rock) this.getPieceOnBoard(7, i+1, board);
 		King king = (King) this.getPieceOnBoard(4, i+1, board);
 		//Setzt neue Position
 		king.setPositionX(6);
 		rock.setPositionX(5);
-		//Setzt die Figuren an neue Position und löscht alte Position
+		//Setzt die Figuren an neue Position und lÃ¶scht alte Position
 		this.putPieceOnBoard(king, board);
 		this.putPieceOnBoard(rock, board);
 		this.emptyOldPosition(i, 7, board);
 		this.emptyOldPosition(i, 4, board);
-		System.out.println("kurze Rochade durchgeführt");
+		System.out.println("kurze Rochade durchgefÃ¼hrt");
 	}
 	
-	//Führt eine lange Rochade durch -> nimmt Farbe als Wert an
+	//FÃ¼hrt eine lange Rochade durch -> nimmt Farbe als Wert an
 	public void doLangeRochade(boolean owner, Piece[][] board){
-		//Prüfung ob Weiß oder Schwarz, verändert die beteiligte Zeile
+		//PrÃ¼fung ob Weiss oder Schwarz, verÃ¤ndert die beteiligte Zeile
 		int i;
 		if(owner){
 			i=7;
 		}else{
 			i=0;
 		}
-		//Holt beteiligten König und Turm
+		//Holt beteiligten KÃ¶nig und Turm
 		Rock rock = (Rock) this.getPieceOnBoard(0, i+1, board);
 		King king = (King) this.getPieceOnBoard(4, i+1, board);
 		//Setzt neue Position
 		king.setPositionX(2);
 		rock.setPositionX(3);
-		//Setzt die Figuren an neue Position und löscht alte Position
+		//Setzt die Figuren an neue Position und lÃ¶scht alte Position
 		this.putPieceOnBoard(king, board);
 		this.putPieceOnBoard(rock, board);
 		this.emptyOldPosition(i, 0, board);
 		this.emptyOldPosition(i, 4, board);
-		System.out.println("lange Rochade durchgeführt");
+		System.out.println("lange Rochade durchgefÃ¼hrt");
 		
 	}
 
-	//Prüft ob die möglichen Züge des gegnerischen Königs im Schach noch Optionen frei halten
+	//PrÃ¼ft ob die mÃ¶glichen ZÃ¼ge des gegnerischen KÃ¶nigs im Schach noch Optionen frei halten
 	public boolean testMovesForCheckMate(boolean owner, Piece[][] board){
-		//holt König auf dem Brett
+		//holt KÃ¶nig auf dem Brett
 		King king = this.getKingOnBoard(owner, board);
-		//Mögliche Züge des Königs generieren
+		//MÃ¶gliche ZÃ¼ge des KÃ¶nigs generieren
 		ArrayList<String> possMoves = king.getPossibleMoveDestinations(king.getPositionX(), king.getPositionY());
 		
 		//Initiiere beteiligte Informationen
@@ -320,7 +323,7 @@ public class Controller {
 		int xNow = king.getPositionX();
 		int yNow = king.getPositionY();
 		
-		//iteriert durch alle Möglichkeiten
+		//iteriert durch alle MÃ¶glichkeiten
 		for(String item: possMoves){
 			//Verarbeitet Positions-String zu X und Y Wert
 	        String[] parts = item.split(",");
@@ -328,10 +331,9 @@ public class Controller {
 			parts[1] = parts[1].trim();
 	        int xMove = Integer.parseInt(parts[0]);
 			int yMove = Integer.parseInt(parts[1]);
-			
-			//Prüfe ob Figur auf dem zu prüfenden Feld ein Gegner ist (wenn nicht-> keine Option)
-			if(board[yMove][yMove].isOwner()!=owner){
-				//Führt den Zug auf das Prüffeld testweise durch
+			//PrÃ¼fe ob Figur auf dem zu prÃ¼fenden Feld ein Gegner ist (wenn nicht-> keine Option)
+			if(analyse.testIfEnemy(owner, xMove, yMove, board) || analyse.testIfEmpty(xMove, yMove, board)){
+				//FÃ¼hrt den Zug auf das PrÃ¼ffeld testweise durch
 				king.setPositionX(xMove);
 				king.setPositionY(yMove);
 				Piece zwischen = board[yMove][xMove];
@@ -339,7 +341,7 @@ public class Controller {
 				board[yNow][xNow] = this.fillEmptySpot(xNow, yNow);
 				//Testet ob man immer noch im Schach steht nach diesem Zug
 				if(!analyse.testIfOwnerPutsInCheck(board, !owner)){
-					//wenn nicht, wird der Testzug "undo-ed" und false zurück gegeben
+					//wenn nicht, wird der Testzug "undo-ed" und false zurÃ¼ck gegeben
 					king.setPositionX(xNow);
 					king.setPositionY(yNow);
 					board[yNow][xNow] = king;
@@ -357,10 +359,10 @@ public class Controller {
 				//wenn eigene Figur wird checkMate vorbehaltlich auf true gesetzt wird
 				checkMate = true;
 			}
-			//Iteration beginnt mit neuem "möglichen" Ziel von vorne
+			//Iteration beginnt mit neuem "mÃ¶glichen" Ziel von vorne
 		}
 		
-		//Wenn man nach vollständigem Durchlauf hier ankommt, prüft man die Variable und returned entsprechend
+		//Wenn man nach vollstÃ¤ndigem Durchlauf hier ankommt, prÃ¼ft man die Variable und returned entsprechend
 		if(checkMate){
 			return true;
 		}else{

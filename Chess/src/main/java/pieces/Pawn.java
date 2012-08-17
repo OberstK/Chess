@@ -18,19 +18,19 @@ public class Pawn extends Piece{
 		boolean doubleMove = false;
 		ArrayList<String> possibleDestinations = new ArrayList<String>();
 		
-		if((owner && yPosStart==6)||(owner==false && yPosStart==1)){
+		if((owner && yPosStart==1)||(owner==false && yPosStart==6)){
 			doubleMove = true;
 		}
 		
-		//Weiß
+		//Weiï¿½
 				if(owner){
 					//Bewegung nach Vorne (1 und 2 Schritte)
-					if(yPosStart-1>=0){
-						if(board[yPosStart-1][xPosStart].getSymbol().equals("  ")){
-							possibleDestinations.add(xPosStart+","+(yPosStart-1));
-							if(yPosStart-2>=0){
-								if(doubleMove && board[yPosStart-2][xPosStart].getSymbol().equals("  ")){
-									possibleDestinations.add(xPosStart+","+(yPosStart-2));
+					if(yPosStart+1<=7){
+						if(board[yPosStart+1][xPosStart].getType()==null){
+							possibleDestinations.add(xPosStart+","+(yPosStart+1));
+							if(yPosStart+2<=7){
+								if(doubleMove && board[yPosStart+2][xPosStart].getType()==null){
+									possibleDestinations.add(xPosStart+","+(yPosStart+2));
 								}
 							}
 						}
@@ -42,12 +42,12 @@ public class Pawn extends Piece{
 				//Schwarz
 				else{
 					//Bewegung nach Vorne (1 und 2 Schritte)
-						if(yPosStart+1<=7){
-							if(board[yPosStart+1][xPosStart].getSymbol().equals("  ")){
-								possibleDestinations.add(xPosStart+","+(yPosStart+1));
-								if(yPosStart+2<=7){
-									if(doubleMove && board[yPosStart+2][xPosStart].getSymbol().equals("  ")){
-										possibleDestinations.add(xPosStart+","+(yPosStart+2));
+						if(yPosStart-1>=0){
+							if(board[yPosStart-1][xPosStart].getType()==null){
+								possibleDestinations.add(xPosStart+","+(yPosStart-1));
+								if(yPosStart-2>=0){
+									if(doubleMove && board[yPosStart-2][xPosStart].getType()==null){
+										possibleDestinations.add(xPosStart+","+(yPosStart-2));
 									}
 								}
 							}
@@ -104,7 +104,7 @@ public class Pawn extends Piece{
 		ArrayList<String> possibleDestinations = this.getPossibleMoveDestinations(xPosStart, yPosStart, board, owner);
 		String destPoint = xPosEnd+","+yPosEnd;
 		
-		//Prüfung
+		//Prï¿½fung
 		for(String item: possibleDestinations){
 			if(item.equals(destPoint)){
 				return true;
@@ -118,7 +118,7 @@ public class Pawn extends Piece{
 		ArrayList<String> possibleDestinations = this.getPossibleHitDestinations(xPosStart, yPosStart, board, owner);
 		String destPoint = xPosEnd+","+yPosEnd;
 
-		//Prüfung
+		//Prï¿½fung
 		for(String item: possibleDestinations){
 			if(item.equals(destPoint)){
 				return true;
@@ -130,7 +130,7 @@ public class Pawn extends Piece{
 	
 	public Pawn(String color, int count) {
 		
-		if(color.equalsIgnoreCase("weiß")){
+		if(color.equalsIgnoreCase("weiss")){
 			this.setOwner(true);
 			this.setSymbol(" P");
 		}else if(color.equalsIgnoreCase("schwarz")){
@@ -166,12 +166,12 @@ public class Pawn extends Piece{
 
 		
 		if(this.isOwner()==true){
-			this.setColor("Weiß");
-			this.setPositionY(6);
+			this.setColor("Weiss");
+			this.setPositionY(1);
 			
 		}else{
 			this.setColor("Schwarz");
-			this.setPositionY(1);
+			this.setPositionY(6);
 		}
 		this.setType("Pawn");
 		

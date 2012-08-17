@@ -20,7 +20,7 @@ public class ChessPiece extends JLabel{
 		String colorName;
         if(color==null){
         	colorName = "leer";
-        }else if(color.equalsIgnoreCase("weiﬂ")){
+        }else if(color.equalsIgnoreCase("weiss")){
         	colorName = "white";
         }else{
         	colorName = "black";

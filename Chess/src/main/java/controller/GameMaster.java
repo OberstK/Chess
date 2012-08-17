@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 import main.java.gui.Board;
 import main.java.gui.ChessPiece;
 import main.java.gui.Square;
-import main.java.gui.Viewer;
 import main.java.pieces.*;
 import main.java.players.Player;
 
@@ -69,10 +68,7 @@ public class GameMaster {
 	
 	
 	class MyMouseListener implements MouseListener{
-		
-		
-		
-		
+
 		@Override
 		public void mouseClicked(MouseEvent e) {}
 		@Override
@@ -91,25 +87,25 @@ public class GameMaster {
 			startPanel = (Square) c.getParent();
 			int xViewStart = startPanel.getxPos();
 			int yViewStart = startPanel.getyPos();
-			
-			for(String entry: control.getPositionOfPosDestSquares(control.getPieceOnBoard(xViewStart, yViewStart , board), xViewStart, yViewStart, board, control.getPlayerOnTurn(playersInGame).isOwner())){
-				String[] parts = entry.split(",");
-		        parts[0] = parts[0].trim();
-				parts[1] = parts[1].trim();
-				int xOut = Integer.parseInt(parts[0]);
-				int yOut = Integer.parseInt(parts[1]);
-				_view.findSquareByPos(xOut, yOut).setBackground(Color.GREEN);
-			}
-			
-
-			//Prüfe ob Figur an dieser Stelle
+			//Prï¿½fe ob Figur an dieser Stelle
 			if(analyse.testIfEmpty(xViewStart, yViewStart, board)){
 				System.out.println("Keine Figur an dieser Stelle!");
-			//Prüfe ob eigene Figur
+			//Prï¿½fe ob eigene Figur
 			}else if(analyse.testIfEnemy(control.getPlayerOnTurn(playersInGame).isOwner(), xViewStart, yViewStart, board)){
 				System.out.println("Das ist keine von deinen Figuren!");
 			//Sonst bewegen
 			}else{
+				for(String entry: control.getPositionOfPosDestSquares(control.getPieceOnBoard(xViewStart, yViewStart , board), xViewStart, yViewStart, board, control.getPlayerOnTurn(playersInGame).isOwner())){
+					String[] parts = entry.split(",");
+			        parts[0] = parts[0].trim();
+					parts[1] = parts[1].trim();
+					int xOut = Integer.parseInt(parts[0]);
+					int yOut = Integer.parseInt(parts[1]);
+					_view.findSquareByPos(xOut, yOut).setBackground(Color.GREEN);
+					if(!analyse.testIfEmpty(xOut, yOut, board)){
+						_view.findSquareByPos(xOut, yOut).setBackground(Color.RED);
+					}
+				}
 				chessPiece = (ChessPiece) c;
 				 int x = e.getX() + xAdjustment;
 				 int y = e.getY() + yAdjustment;
@@ -122,26 +118,34 @@ public class GameMaster {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (chessPiece == null) return;
-			 
+			_view.resetColorSquares();
 			chessPiece.setVisible(false);
 			Component c =  _view.getChessBoard().findComponentAt(e.getX(), e.getY());
 			
 			int xViewStart = startPanel.getxPos();
 			int yViewStart = startPanel.getyPos();
-			
+			int xViewEnd = 0;
+			int yViewEnd = 0;
 			if (c instanceof JLabel)
 			{
 				Container parent = c.getParent();
 				endPanel = (Square) parent;
-				int xViewEnd = endPanel.getxPos();
-				int yViewEnd = endPanel.getyPos();
+				xViewEnd = endPanel.getxPos();
+				yViewEnd = endPanel.getyPos();
 				if(control.bewegeFigur(control.getPieceOnBoard(xViewStart, yViewStart , board), xViewEnd, yViewEnd, board, outPieces)){
 					if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner())){
 						System.out.println("Nach dem Zug stehst du im Schach!");
+						if(control.bewegeFigur(control.getPieceOnBoard(xViewEnd, yViewEnd , board), xViewStart, yViewStart, board, outPieces)){
+							System.out.println("Zurï¿½ckgesetzt!");
+						}else{
+							System.out.println("Schwerwiegender Fehler!");
+						}
+						startPanel.add(chessPiece);
+					}else{
+						parent.remove(0);
+						parent.add(chessPiece);
+						control.changePlayers(playersInGame);
 					}
-					parent.remove(0);
-					parent.add(chessPiece);
-					control.changePlayers(playersInGame);
 				}else{
 					startPanel.add(chessPiece);
 				}
@@ -150,27 +154,33 @@ public class GameMaster {
 			{
 				Container parent = (Container)c;
 				endPanel = (Square) parent;
-				int xViewEnd = endPanel.getxPos();
-				int yViewEnd = endPanel.getyPos();
+				xViewEnd = endPanel.getxPos();
+				yViewEnd = endPanel.getyPos();
 				if(control.bewegeFigur(control.getPieceOnBoard(xViewStart, yViewStart , board), xViewEnd, yViewEnd, board, outPieces)){
-					parent.add(chessPiece);
-					control.changePlayers(playersInGame);
+					if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner())){
+						System.out.println("Nach dem Zug stehst du im Schach!");
+						startPanel.add(chessPiece);
+					}else{
+						parent.add(chessPiece);
+						control.changePlayers(playersInGame);
+					}
 				}else{
 					startPanel.add(chessPiece);
 				}
 			}
 			chessPiece.setVisible(true);
 			
-			
-			//Prüfe auf Schachmatt des Spielers der jetzt dran ist
-			if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner()) && control.testMovesForCheckMate(control.getPlayerOnTurn(playersInGame).isOwner(), board)){
-				System.out.println(control.getPlayerNotOnTurn(playersInGame).getColor()+" setzt "+control.getPlayerOnTurn(playersInGame).getColor()+" Schachmatt!");
-				//gameEnded = true;
-			}
-			
-			//Prüfe auf Schach des Spielers der jetzt dran ist
-			if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner())){
-				System.out.println("Schach!");
+			if(xViewStart != xViewEnd && yViewStart != yViewEnd){
+				//Prï¿½fe auf Schachmatt des Spielers der jetzt dran ist
+				if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner()) && control.testMovesForCheckMate(control.getPlayerOnTurn(playersInGame).isOwner(), board)){
+					System.out.println(control.getPlayerNotOnTurn(playersInGame).getColor()+" setzt "+control.getPlayerOnTurn(playersInGame).getColor()+" Schachmatt!");
+					//gameEnded = true;
+				}
+				
+				//Prï¿½fe auf Schach des Spielers der jetzt dran ist
+				if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner())){
+					System.out.println("Schach!");
+				}
 			}
 		}
 	}
@@ -225,52 +235,52 @@ public class GameMaster {
 			int zLetter = analyse.letterConverter(values[2]);
 			int zNum = Integer.parseInt(values[3]);
 			
-			//Prüfe ob Figur an dieser Stelle
+			//Prï¿½fe ob Figur an dieser Stelle
 			if(control.getPieceOnBoard(sLetter, sNum, board)==null){
 				System.out.println("Keine Figur an dieser Stelle!");
 				//viewer.zeigeSpielBrett(board);
 				this.listenUser();
 				
-			//Prüfe ob eigene Figur
+			//Prï¿½fe ob eigene Figur
 			}else if(control.getPieceOnBoard(sLetter, sNum, board).isOwner()!=playerOnTurn.isOwner()){
 				System.out.println("Das ist keine von deinen Figuren!");
 				//viewer.zeigeSpielBrett(board);
 				this.listenUser();
 			
-			//ist eigene und vorhandene Figur, führe Zug durch
+			//ist eigene und vorhandene Figur, fï¿½hre Zug durch
 			}else{
 				boolean reverse = false;
 				boolean gameEnded = false;
-				//Prüfung auf Schachmatt
+				//Prï¿½fung auf Schachmatt
 				if(playerOnTurn.isImSchach() && control.getPieceOnBoard(sLetter, sNum, board) instanceof King){
 					King king = (King) control.getPieceOnBoard(sLetter, sNum, board);
 					if(king.getPossibleMoveDestinations(sLetter, sNum).isEmpty()){
 						System.out.println("Schachmatt! "+playerOnTurn.getName()+" hat verloren");
 					}
 				}
-				//Prüfung auf Schach
+				//Prï¿½fung auf Schach
 				else if(playerOnTurn.isImSchach() && !(control.getPieceOnBoard(zLetter, zNum, board) instanceof King)){
 					if(control.bewegeFigur(control.getPieceOnBoard(zLetter, zNum, board), sLetter, sNum, board, outPieces)==false){
-						System.out.println("Reverse nicht möglich! Schwerwiegender Fehler!");
+						System.out.println("Reverse nicht mï¿½glich! Schwerwiegender Fehler!");
 					}else{
 						System.out.println("Du stehst im Schach!");
 						reverse =true;
 					}	
 					
-				//Bewegung durchführen
+				//Bewegung durchfï¿½hren
 				}else if(control.bewegeFigur(control.getPieceOnBoard(sLetter, sNum, board), zLetter, zNum, board, outPieces)){
 					
-					//Prüfe ob man selbst im Schach steht nach dem Zug
+					//Prï¿½fe ob man selbst im Schach steht nach dem Zug
 					if(analyse.testIfOwnerPutsInCheck(board, playerNotOnTurn.isOwner())){
 						if(control.bewegeFigur(control.getPieceOnBoard(zLetter, zNum, board), sLetter, sNum, board, outPieces)==false){
-							System.out.println("Reverse nicht möglich! Schwerwiegender Fehler!");
+							System.out.println("Reverse nicht mï¿½glich! Schwerwiegender Fehler!");
 						}else{
-							System.out.println("Du würdest nach diesem Zug im Schach stehen!");
+							System.out.println("Du wï¿½rdest nach diesem Zug im Schach stehen!");
 							reverse =true;
 						}
 					}	
 
-					//Prüfe auf Schachmatt des Spielers der nicht dran ist
+					//Prï¿½fe auf Schachmatt des Spielers der nicht dran ist
 					if(analyse.testIfOwnerPutsInCheck(board, playerOnTurn.isOwner()) && control.testMovesForCheckMate(playerNotOnTurn.isOwner(), board)){
 						System.out.println("Schachmatt!");
 						gameEnded = true;
@@ -323,7 +333,7 @@ public class GameMaster {
 		}else if(command.getCommand().equals(CommandConst.RS)){
 			//Rochade kurz
 			if(analyse.rochadeShortPossible(playerOnTurn.isOwner(), board)){
-				//Weiß
+				//Weiï¿½
 				if(playerOnTurn.isOwner() == true){
 					control.doKurzeRochade(true, board);
 					control.changePlayers(playersInGame);
@@ -333,7 +343,7 @@ public class GameMaster {
 					control.changePlayers(playersInGame);
 				}
 			}else{
-				System.out.println("kurze Rochade nicht möglich. Figuren im Weg oder an falscher Position!");
+				System.out.println("kurze Rochade nicht mï¿½glich. Figuren im Weg oder an falscher Position!");
 			}
 			//viewer.zeigeSpielBrett(board);
 			this.listenUser();
@@ -341,7 +351,7 @@ public class GameMaster {
 		}else if(command.getCommand().equals(CommandConst.RL)){
 			//Rochade Lang
 			if(analyse.rochadeLongPossible(playerOnTurn.isOwner(), board)){
-				//Weiß
+				//Weiï¿½
 				if(playerOnTurn.isOwner() == true){
 					control.doLangeRochade(true, board);
 					control.changePlayers(playersInGame);
@@ -352,7 +362,7 @@ public class GameMaster {
 					control.changePlayers(playersInGame);
 				}
 			}else{
-				System.out.println("lange Rochade nicht möglich. Figuren im Weg oder an falscher Position!");
+				System.out.println("lange Rochade nicht mï¿½glich. Figuren im Weg oder an falscher Position!");
 			}
 			//viewer.zeigeSpielBrett(board);
 			this.listenUser();

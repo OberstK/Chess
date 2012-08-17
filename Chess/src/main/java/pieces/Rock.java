@@ -86,7 +86,7 @@ public class Rock extends Piece{
 		ArrayList<String> possibleDestinations = this.getPossibleMoveDestinations(xPosStart, yPosStart, board);
 		String destPoint = xPosEnd+","+yPosEnd;
 		
-		//Prüfung
+		//Prï¿½fung
 		for(String item: possibleDestinations){
 			if(item.equals(destPoint)){
 				return true;
@@ -98,7 +98,7 @@ public class Rock extends Piece{
 	public Rock(String color, int count){
 		this.setRochade(true);
 		
-		if(color.equalsIgnoreCase("weiß")){
+		if(color.equalsIgnoreCase("weiss")){
 			this.setOwner(true);
 			this.setSymbol(" R");
 		}else if(color.equalsIgnoreCase("schwarz")){
@@ -117,12 +117,12 @@ public class Rock extends Piece{
 		}
 		
 		if(this.isOwner()==true){
-			this.setColor("Weiß");
-			this.setPositionY(7);
+			this.setColor("Weiss");
+			this.setPositionY(0);
 			
 		}else{
 			this.setColor("Schwarz");
-			this.setPositionY(0);
+			this.setPositionY(7);
 		}
 		
 		this.setType("Rock");

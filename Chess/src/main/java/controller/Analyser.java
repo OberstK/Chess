@@ -54,7 +54,6 @@ public class Analyser {
 	}
 	
 	public boolean testIfEnemy(boolean owner, int xPos, int yPos, Piece[][] board){
-		
 		if(board[yPos][xPos].isOwner()!=owner){
 			return true;
 		}else{
@@ -72,7 +71,7 @@ public class Analyser {
 	
 	public boolean testIfKingIsHere(Piece[][]board, ArrayList<String> possMoves, boolean owner){
 		String kingField ="";
-		//Suche nach weissem König
+		//Suche nach weissem Kï¿½nig
 		if(owner){
 			for(int i=0; i<=7; i++){
 				for(int j=0; j<=7 ; j++){
@@ -144,13 +143,13 @@ public class Analyser {
 
 	
 	public boolean rochadeShortPossible(boolean owner, Piece[][] board){
-		//Weiß
+		//WeiÃŸ
 		if(owner){
 			if(board[7][4] instanceof King){
-				System.out.println("König gefunden");
+				System.out.println("KÃ¶nig gefunden");
 				King king = (King) board[7][4];
 				if(king.isRochade()){
-					System.out.println("König darf rochieren");
+					System.out.println("KÃ¶nig darf rochieren");
 					if(board[7][7] instanceof Rock){
 						System.out.println("Turm gefunden");
 						Rock rock = (Rock) board[7][0];
@@ -190,7 +189,7 @@ public class Analyser {
 	public boolean rochadeLongPossible(boolean owner, Piece[][] board){
 		
 		
-		//Weiß
+		//Weiï¿½
 		if(owner){
 			if(board[7][4] instanceof King){
 				King king = (King) board[7][4];

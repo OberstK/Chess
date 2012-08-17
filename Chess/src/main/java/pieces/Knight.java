@@ -16,14 +16,14 @@ public class Knight extends Piece{
 	public ArrayList<String> getPossibleMoveDestinations(int xPosStart, int yPosStart){
 		ArrayList<String> possibleDestinations = new ArrayList<String>();
 		
-		//nach rechts und unten
+		//nach rechts und oben
 		if(xPosStart+2<=7 && yPosStart+1<=7){
 			int x = xPosStart+2;
 			int y = yPosStart+1;
 			possibleDestinations.add(x+","+y);
 		}
 		
-		//nach rechts und oben
+		//nach rechts und unten
 		if(xPosStart+2<=7 && yPosStart-1>=0){
 			int x = xPosStart+2;
 			int y = yPosStart-1;
@@ -81,7 +81,7 @@ public class Knight extends Piece{
 		ArrayList<String> possibleDestinations = this.getPossibleMoveDestinations(xPosStart, yPosStart);
 		String destPoint = xPosEnd+","+yPosEnd;
 
-		//Prüfung
+		//Prï¿½fung
 		for(String item: possibleDestinations){
 			if(item.equals(destPoint)){
 				return true;
@@ -92,7 +92,7 @@ public class Knight extends Piece{
 	}
 
 	public Knight(String color, int count){
-		if(color.equalsIgnoreCase("weiß")){
+		if(color.equalsIgnoreCase("weiss")){
 			this.setOwner(true);
 			this.setSymbol(" N");
 		}else if(color.equalsIgnoreCase("schwarz")){
@@ -111,12 +111,12 @@ public class Knight extends Piece{
 		}
 		
 		if(this.isOwner()==true){
-			this.setColor("Weiß");
-			this.setPositionY(7);
+			this.setColor("Weiss");
+			this.setPositionY(0);
 			
 		}else{
 			this.setColor("Schwarz");
-			this.setPositionY(0);
+			this.setPositionY(7);
 		}
 		
 		this.setType("Knight");

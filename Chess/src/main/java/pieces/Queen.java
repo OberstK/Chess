@@ -11,7 +11,7 @@ public class Queen extends Piece{
 				for(int i=1; i<=7;i++){
 					int xPosTest = xPosStart+i;
 					if(xPosTest<=7){
-						if(board[yPosStart][xPosTest].getSymbol().equals("  ")){
+						if(board[yPosStart][xPosTest].getType()==null){
 							possibleDestinations.add(xPosTest+","+yPosStart);
 						}else{
 							possibleDestinations.add(xPosTest+","+yPosStart);
@@ -24,7 +24,7 @@ public class Queen extends Piece{
 				for(int i=1; i<=7;i++){
 					int xPosTest = xPosStart-i;
 					if(xPosTest>=0){
-						if(board[yPosStart][xPosTest].getSymbol().equals("  ")){
+						if(board[yPosStart][xPosTest].getType()==null){
 							possibleDestinations.add(xPosTest+","+yPosStart);
 						}else{
 							possibleDestinations.add(xPosTest+","+yPosStart);
@@ -35,9 +35,9 @@ public class Queen extends Piece{
 				
 				//nach oben, selbe Spalte
 				for(int i=1; i<=7;i++){
-					int yPosTest = yPosStart-i;
-					if(yPosTest>=0){
-						if(board[yPosTest][xPosStart].getSymbol().equals("  ")){
+					int yPosTest = yPosStart+i;
+					if(yPosTest<=7){
+						if(board[yPosTest][xPosStart].getType()==null){
 							possibleDestinations.add(xPosStart+","+yPosTest);
 						}else{
 							possibleDestinations.add(xPosStart+","+yPosTest);
@@ -48,9 +48,9 @@ public class Queen extends Piece{
 				
 				//nach unten, selbe Spalte
 				for(int i=1; i<=7;i++){
-					int yPosTest = yPosStart+i;
-					if(yPosTest<=7){
-						if(board[yPosTest][xPosStart].getSymbol().equals("  ")){
+					int yPosTest = yPosStart-i;
+					if(yPosTest>=0){
+						if(board[yPosTest][xPosStart].getType()==null){
 							possibleDestinations.add(xPosStart+","+yPosTest);
 						}else{
 							possibleDestinations.add(xPosStart+","+yPosTest);
@@ -59,12 +59,12 @@ public class Queen extends Piece{
 					}
 				}
 				
-				//schräg rechts oben
+				//schrï¿½g rechts oben
 				for(int i=1; i<=7;i++){
 					int yPosTest = yPosStart+i;
 					int xPosTest = xPosStart+i;
 					if(yPosTest<=7 && xPosTest<=7){
-						if(board[yPosTest][xPosTest].getSymbol().equals("  ")){
+						if(board[yPosTest][xPosTest].getType()==null){
 							possibleDestinations.add(xPosTest+","+yPosTest);
 						}else{
 							possibleDestinations.add(xPosTest+","+yPosTest);
@@ -72,12 +72,12 @@ public class Queen extends Piece{
 						}
 					}
 				}
-				//schräg rechts unten
+				//schrï¿½g rechts unten
 				for(int i=1; i<=7;i++){
 					int yPosTest = yPosStart-i;
 					int xPosTest = xPosStart+i;
 					if(yPosTest>=0 && xPosTest<=7){
-						if(board[yPosTest][xPosTest].getSymbol().equals("  ")){
+						if(board[yPosTest][xPosTest].getType()==null){
 							possibleDestinations.add(xPosTest+","+yPosTest);
 						}else{
 							possibleDestinations.add(xPosTest+","+yPosTest);
@@ -85,12 +85,12 @@ public class Queen extends Piece{
 						}
 					}
 				}
-				//schräg links oben
+				//schrï¿½g links oben
 				for(int i=1; i<=7;i++){
 					int yPosTest = yPosStart+i;
 					int xPosTest = xPosStart-i;
 					if(yPosTest<=7 && xPosTest>=0){
-						if(board[yPosTest][xPosTest].getSymbol().equals("  ")){
+						if(board[yPosTest][xPosTest].getType()==null){
 							possibleDestinations.add(xPosTest+","+yPosTest);
 						}else{
 							possibleDestinations.add(xPosTest+","+yPosTest);
@@ -98,12 +98,12 @@ public class Queen extends Piece{
 						}
 					}
 				}
-				//schräg links unten
+				//schrï¿½g links unten
 				for(int i=1; i<=7;i++){
 					int yPosTest = yPosStart-i;
 					int xPosTest = xPosStart-i;
 					if(yPosTest>=0 && xPosTest>=0){
-						if(board[yPosTest][xPosTest].getSymbol().equals("  ")){
+						if(board[yPosTest][xPosTest].getType()==null){
 							possibleDestinations.add(xPosTest+","+yPosTest);
 						}else{
 							possibleDestinations.add(xPosTest+","+yPosTest);
@@ -120,7 +120,7 @@ public class Queen extends Piece{
 		ArrayList<String> possibleDestinations = this.getPossibleMoveDestinations(xPosStart, yPosStart, board);
 		String destPoint = xPosEnd+","+yPosEnd;
 
-		//Prüfung
+		//Prï¿½fung
 		for(String item: possibleDestinations){
 			if(item.equals(destPoint)){
 				return true;
@@ -132,7 +132,7 @@ public class Queen extends Piece{
 	
 	public Queen(String color){
 		
-		if(color.equalsIgnoreCase("weiß")){
+		if(color.equalsIgnoreCase("weiss")){
 			this.setOwner(true);
 			this.setSymbol(" Q");
 		}else if(color.equalsIgnoreCase("schwarz")){
@@ -144,14 +144,14 @@ public class Queen extends Piece{
 		
 
 		if(this.isOwner()==true){
-			this.setColor("Weiß");
+			this.setColor("Weiss");
 			this.setPositionX(3);
-			this.setPositionY(7);
+			this.setPositionY(0);
 			
 		}else{
 			this.setColor("Schwarz");
 			this.setPositionX(3);
-			this.setPositionY(0);
+			this.setPositionY(7);
 		}
 		
 		this.setType("Queen");

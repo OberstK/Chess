@@ -31,42 +31,42 @@ public class King extends Piece{
 					possibleDestinations.add(x+","+y);
 				}
 				
-				//nach oben
+				//nach unten
 				if(yPosStart-1>=0){
 					int x = xPosStart;
 					int y = yPosStart-1;
 					possibleDestinations.add(x+","+y);
 				}
 				
-				//nach unten
+				//nach oben
 				if(yPosStart+1<=7){
 					int x = xPosStart;
 					int y = yPosStart+1;
 					possibleDestinations.add(x+","+y);
 				}
 				
-				//nach rechts und unten
+				//nach rechts und oben
 				if(xPosStart+1<=7 && yPosStart+1<=7){
 					int x = xPosStart+1;
 					int y = yPosStart+1;
 					possibleDestinations.add(x+","+y);
 				}
 				
-				//nach links und unten
+				//nach links und oben
 				if(xPosStart-1>=0 && yPosStart+1<=7){
 					int x = xPosStart-1;
 					int y = yPosStart+1;
 					possibleDestinations.add(x+","+y);
 				}
 				
-				//nach rechts und oben
+				//nach rechts und unten
 				if(xPosStart+1<=7 && yPosStart-1>=0){
 					int x = xPosStart+1;
 					int y = yPosStart-1;
 					possibleDestinations.add(x+","+y);
 				}
 				
-				//nach links und oben
+				//nach links und unten
 				if(xPosStart-1>=0 && yPosStart-1>=0){
 					int x = xPosStart-1;
 					int y = yPosStart-1;
@@ -82,7 +82,7 @@ public class King extends Piece{
 		ArrayList<String> possibleDestinations = this.getPossibleMoveDestinations(xPosStart, yPosStart);
 		String destPoint = xPosEnd+","+yPosEnd;
 		
-		//Prüfung
+		//Prï¿½fung
 		for(String item: possibleDestinations){
 			if(item.equals(destPoint)){
 				return true;
@@ -95,7 +95,7 @@ public class King extends Piece{
 	public King(String color){
 		this.setRochade(true);
 		
-		if(color.equalsIgnoreCase("weiß")){
+		if(color.equalsIgnoreCase("weiss")){
 			this.setOwner(true);
 			this.setSymbol(" K");
 		}else if(color.equalsIgnoreCase("schwarz")){
@@ -106,14 +106,14 @@ public class King extends Piece{
 		}
 		
 		if(this.isOwner()==true){
-			this.setColor("Weiß");
+			this.setColor("Weiss");
 			this.setPositionX(4);
-			this.setPositionY(7);
+			this.setPositionY(0);
 			
 		}else{
 			this.setColor("Schwarz");
 			this.setPositionX(4);
-			this.setPositionY(0);
+			this.setPositionY(7);
 		}
 		this.setType("King");
 	}

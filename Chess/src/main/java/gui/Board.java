@@ -43,9 +43,6 @@ public class Board extends JFrame{
 		this.chessPiece = chessPiece;
 	}
 
-	
-
-
 	private static final long serialVersionUID = 1L;
 
 		public Board(Piece[][] board){
@@ -53,20 +50,23 @@ public class Board extends JFrame{
 
 			fenster = new JLayeredPane();
 			getContentPane().add(fenster);
-			this.setSize(815,835);
-			this.setLocation(0,0);
+			this.setSize(1100,950);
 			
 			chessBoard = new JPanel();
 			fenster.add(chessBoard, JLayeredPane.DEFAULT_LAYER);
 			chessBoard.setLayout( new GridLayout(8, 8) );
 			chessBoard.setBounds(0, 0, 800, 800);
+			chessBoard.setAlignmentX(MAXIMIZED_HORIZ);
 			
-			for(int i=0; i<=7; i++){
+			for(int i=7; i>=0; i--){
 				for(int j=0; j<=7; j++){
-					Square square = new Square(j,i);
-					
+					Square square = new Square(j,i);					
 					if((j % 2==0 && i % 2 != 0) || (j% 2!=0 && i%2 ==0)){
 						square.setBackground(Color.GRAY);
+						square.setBackColor(Color.GRAY);
+					}else{
+						square.setBackground(Color.WHITE);
+						square.setBackColor(Color.WHITE);
 					}
 					chessPiece = new ChessPiece(board[i][j].getType(), board[i][j].getColor());					
 					square.add(chessPiece);
@@ -87,6 +87,15 @@ public class Board extends JFrame{
 				}
 			}
 			return foundSquare;
+		}
+		
+		public void resetColorSquares(){
+			for(int i=0; i<64; i++){
+				if(chessBoard.getComponent(i) instanceof Square){
+					Square square = (Square) chessBoard.getComponent(i);
+					square.setBackground(square.getBackColor());
+				}
+			}
 		}
 		
 		public void setMouseMoveListen(MouseMotionListener m){
