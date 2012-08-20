@@ -9,11 +9,11 @@ import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
-import main.java.pieces.Piece;
+import main.java.model.Piece;
 
 
 
-public class Board extends JFrame{
+public class MainView extends JFrame{
 	private JLayeredPane fenster;
 	private ChessPiece chessPiece; //JLabel
 	private JPanel chessBoard;
@@ -45,7 +45,7 @@ public class Board extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 
-		public Board(Piece[][] board){
+		public MainView(Piece[][] board){
 			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 			fenster = new JLayeredPane();

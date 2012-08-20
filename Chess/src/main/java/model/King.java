@@ -1,4 +1,4 @@
-package main.java.pieces;
+package main.java.model;
 
 import java.util.ArrayList;
 

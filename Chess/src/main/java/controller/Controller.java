@@ -2,24 +2,23 @@ package main.java.controller;
 
 import java.util.ArrayList;
 
-import main.java.pieces.*;
-import main.java.players.Player;
+import main.java.model.*;
 
 
 public class Controller {
 	
 	private final Analyser analyse;
-	public static Piece[][] lastBoard = new Piece[8][8];
+	
 	
 	//Hole Figur an dieser Position
-	public Piece getPieceOnBoard(int x, int y, Piece[][] board){
+	public Piece getPieceOnBoard(int x, int y, Board boardObj){
 		int colPos = x;
 		int rowPos = y;
 		
-		if(board[rowPos][colPos].getSymbol().equals("  ")){
+		if(boardObj.getBoard()[rowPos][colPos].getType()==null){
 			return null;
 		}
-		return board[rowPos][colPos];
+		return boardObj.getBoard()[rowPos][colPos];
 	}
 	
 	//Hole den jeweiligen König
@@ -180,13 +179,11 @@ public class Controller {
 	/*Bewege eine Figur von seiner Startposition zu seiner Zielposition
 	 * Diverse Prüfungen finden statt
 	 */
-	public boolean bewegeFigur(Piece figur, int xPosEnd, int yPosEnd, Piece[][] board, ArrayList<Piece> outPieces){
+	public boolean bewegeFigur(Piece figur, int xPosEnd, int yPosEnd, Board boardObj, ArrayList<Piece> outPieces){
 		//Initiierung von Variablen zur Überprüfung des Zuges
 		boolean success= false;
 		boolean test = false;
-		
-		//Zwischenspeicherung des Boards
-		lastBoard = board;
+		Piece[][] board = boardObj.getBoard();
 		
 		//Start und Endposition holen
 		int xPosStart = figur.getPositionX();
@@ -265,7 +262,7 @@ public class Controller {
 	}
 	
 	//Führt eine kurze Rochade durch -> nimmt Farbe als Wert an
-	public void doKurzeRochade(boolean owner, Piece[][] board){
+	public void doKurzeRochade(boolean owner, Board boardObj){
 		//Prüfung ob Weiss oder Schwarz, verändert die beteiligte Zeile
 		int i;
 		if(owner){
@@ -274,21 +271,21 @@ public class Controller {
 			i=0;
 		}
 		//Holt beteiligten König und Turm
-		Rock rock = (Rock) this.getPieceOnBoard(7, i+1, board);
-		King king = (King) this.getPieceOnBoard(4, i+1, board);
+		Rock rock = (Rock) this.getPieceOnBoard(7, i+1, boardObj);
+		King king = (King) this.getPieceOnBoard(4, i+1, boardObj);
 		//Setzt neue Position
 		king.setPositionX(6);
 		rock.setPositionX(5);
 		//Setzt die Figuren an neue Position und löscht alte Position
-		this.putPieceOnBoard(king, board);
-		this.putPieceOnBoard(rock, board);
-		this.emptyOldPosition(i, 7, board);
-		this.emptyOldPosition(i, 4, board);
+		boardObj.setPieceOnSquare(king);
+		boardObj.setPieceOnSquare(rock);
+		boardObj.fillEmptySpot(7, i);
+		boardObj.fillEmptySpot(4, i);
 		System.out.println("kurze Rochade durchgeführt");
 	}
 	
 	//Führt eine lange Rochade durch -> nimmt Farbe als Wert an
-	public void doLangeRochade(boolean owner, Piece[][] board){
+	public void doLangeRochade(boolean owner, Board boardObj){
 		//Prüfung ob Weiss oder Schwarz, verändert die beteiligte Zeile
 		int i;
 		if(owner){
@@ -297,24 +294,26 @@ public class Controller {
 			i=0;
 		}
 		//Holt beteiligten König und Turm
-		Rock rock = (Rock) this.getPieceOnBoard(0, i+1, board);
-		King king = (King) this.getPieceOnBoard(4, i+1, board);
+		Rock rock = (Rock) this.getPieceOnBoard(0, i+1, boardObj);
+		King king = (King) this.getPieceOnBoard(4, i+1, boardObj);
 		//Setzt neue Position
 		king.setPositionX(2);
 		rock.setPositionX(3);
 		//Setzt die Figuren an neue Position und löscht alte Position
-		this.putPieceOnBoard(king, board);
-		this.putPieceOnBoard(rock, board);
-		this.emptyOldPosition(i, 0, board);
-		this.emptyOldPosition(i, 4, board);
+		boardObj.setPieceOnSquare(king);
+		boardObj.setPieceOnSquare(rock);
+		boardObj.fillEmptySpot(0, i);
+		boardObj.fillEmptySpot(4, i);
 		System.out.println("lange Rochade durchgeführt");
 		
 	}
 
 	//Prüft ob die möglichen Züge des gegnerischen Königs im Schach noch Optionen frei halten
-	public boolean testMovesForCheckMate(boolean owner, Piece[][] board){
+	public boolean testMovesForCheckMate(boolean owner, Board boardObj){
+		//hole Brett
+		Piece[][] board = boardObj.getBoard();
 		//holt König auf dem Brett
-		King king = this.getKingOnBoard(owner, board);
+		King king = boardObj.getKingOnBoard(owner);
 		//Mögliche Züge des Königs generieren
 		ArrayList<String> possMoves = king.getPossibleMoveDestinations(king.getPositionX(), king.getPositionY());
 		

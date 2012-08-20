@@ -15,20 +15,20 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
-import main.java.gui.Board;
+import main.java.gui.MainView;
 import main.java.gui.ChessPiece;
 import main.java.gui.Square;
-import main.java.pieces.*;
-import main.java.players.Player;
+import main.java.model.*;
 
 
 public class GameMaster {
 	
-	private final Board _view;
+	private final MainView _view;
 	private final CommandListener listener;
 	private final Saver saver;
 	private final Analyser analyse;
 	private final Controller control;
+	private final Board _modelBoard;
 	private int xAdjustment;
 	private int yAdjustment;
 	private ChessPiece chessPiece;
@@ -36,14 +36,13 @@ public class GameMaster {
 	private Square endPanel;
 	
 	
-	public static Piece[][] board = new Piece[8][8];
 	public static Player[] playersInGame = new Player[2];
 	public static ArrayList<Piece> outPieces= new ArrayList<Piece>();
 	
 	
 	//Save and Load
 	public void saveBoard(){
-		saver.saveBoardToXML(board);
+		saver.saveBoardToXML(_modelBoard.getBoard());
 	}
 	
 	public Piece[][] loadBoard(){
@@ -59,7 +58,7 @@ public class GameMaster {
 	}
 	
 	public void resetBoard() {
-		board = control.generateBoard();	
+		_modelBoard.setBoard(control.generateBoard());	
 	}
 
 	public void startGame() {
@@ -77,7 +76,9 @@ public class GameMaster {
 		public void mouseExited(MouseEvent e) {}
 		@Override
 		public void mousePressed(MouseEvent e) {
+			Piece[][] board = _modelBoard.getBoard();
 			chessPiece = null;
+			//Piece[][] board = _modelBoard.getBoard();
 			Component c =  _view.getChessBoard().findComponentAt(e.getX(), e.getY());
 	 
 			if (c instanceof JPanel) return;
@@ -95,7 +96,7 @@ public class GameMaster {
 				System.out.println("Das ist keine von deinen Figuren!");
 			//Sonst bewegen
 			}else{
-				for(String entry: control.getPositionOfPosDestSquares(control.getPieceOnBoard(xViewStart, yViewStart , board), xViewStart, yViewStart, board, control.getPlayerOnTurn(playersInGame).isOwner())){
+				for(String entry: control.getPositionOfPosDestSquares(control.getPieceOnBoard(xViewStart, yViewStart , _modelBoard), xViewStart, yViewStart, board, control.getPlayerOnTurn(playersInGame).isOwner())){
 					String[] parts = entry.split(",");
 			        parts[0] = parts[0].trim();
 					parts[1] = parts[1].trim();
@@ -117,6 +118,7 @@ public class GameMaster {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			Piece[][] board = _modelBoard.getBoard();
 			if (chessPiece == null) return;
 			_view.resetColorSquares();
 			chessPiece.setVisible(false);
@@ -126,17 +128,16 @@ public class GameMaster {
 			int yViewStart = startPanel.getyPos();
 			int xViewEnd = 0;
 			int yViewEnd = 0;
-			if (c instanceof JLabel)
-			{
+			if (c instanceof JLabel){
 				Container parent = c.getParent();
 				endPanel = (Square) parent;
 				xViewEnd = endPanel.getxPos();
 				yViewEnd = endPanel.getyPos();
-				if(control.bewegeFigur(control.getPieceOnBoard(xViewStart, yViewStart , board), xViewEnd, yViewEnd, board, outPieces)){
+				if(control.bewegeFigur(control.getPieceOnBoard(xViewStart, yViewStart , _modelBoard), xViewEnd, yViewEnd, _modelBoard, outPieces)){
 					if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner())){
 						System.out.println("Nach dem Zug stehst du im Schach!");
-						if(control.bewegeFigur(control.getPieceOnBoard(xViewEnd, yViewEnd , board), xViewStart, yViewStart, board, outPieces)){
-							System.out.println("Zur�ckgesetzt!");
+						if(control.bewegeFigur(control.getPieceOnBoard(xViewEnd, yViewEnd , _modelBoard), xViewStart, yViewStart, _modelBoard, outPieces)){
+							System.out.println("Zurueckgesetzt!");
 						}else{
 							System.out.println("Schwerwiegender Fehler!");
 						}
@@ -156,7 +157,7 @@ public class GameMaster {
 				endPanel = (Square) parent;
 				xViewEnd = endPanel.getxPos();
 				yViewEnd = endPanel.getyPos();
-				if(control.bewegeFigur(control.getPieceOnBoard(xViewStart, yViewStart , board), xViewEnd, yViewEnd, board, outPieces)){
+				if(control.bewegeFigur(control.getPieceOnBoard(xViewStart, yViewStart , _modelBoard), xViewEnd, yViewEnd, _modelBoard, outPieces)){
 					if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner())){
 						System.out.println("Nach dem Zug stehst du im Schach!");
 						startPanel.add(chessPiece);
@@ -172,7 +173,7 @@ public class GameMaster {
 			
 			if(xViewStart != xViewEnd && yViewStart != yViewEnd){
 				//Pr�fe auf Schachmatt des Spielers der jetzt dran ist
-				if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner()) && control.testMovesForCheckMate(control.getPlayerOnTurn(playersInGame).isOwner(), board)){
+				if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner()) && control.testMovesForCheckMate(control.getPlayerOnTurn(playersInGame).isOwner(), _modelBoard)){
 					System.out.println(control.getPlayerNotOnTurn(playersInGame).getColor()+" setzt "+control.getPlayerOnTurn(playersInGame).getColor()+" Schachmatt!");
 					//gameEnded = true;
 				}
@@ -204,7 +205,7 @@ public class GameMaster {
 		this._view.setMouseMoveListen(new MyMouseMoveListener());
 	}
 	
-	
+	/*
 	public void listenUser(){
 
 		Command command = listener.scanInput();
@@ -391,13 +392,16 @@ public class GameMaster {
 		}
 	}
 	
+	*/
+	
 	public GameMaster(){
 		saver = new Saver();
 		analyse = new Analyser();
 		control = new Controller();
+		_modelBoard = new Board();
 		if (new File("Board.xml").exists() && new File("Players.xml").exists()) {
         	System.out.println("Gespeichertes Spiel gefunden. Lade...");
-        	board = this.loadBoard();
+        	_modelBoard.setBoard(this.loadBoard());
         	playersInGame = this.loadPlayers();
         	System.out.println("Spiel geladen.");
         	//view.zeigeSpielBrett(board);
@@ -411,7 +415,7 @@ public class GameMaster {
 		String dran = control.getPlayerOnTurn(playersInGame).getName();
 		String dranColor = control.getPlayerOnTurn(playersInGame).getColor();
 		System.out.println(dran+" - "+dranColor+" ist dran!");
-		_view = new Board(board);
+		_view = new MainView(_modelBoard.getBoard());
 		addListener();
 		listener = new CommandListener();
 

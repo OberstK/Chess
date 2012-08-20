@@ -1,6 +1,6 @@
 package main.java.gui;
 
-import main.java.pieces.*;
+import main.java.model.*;
 
 public class Viewer {
 	

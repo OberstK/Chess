@@ -2,14 +2,14 @@ package main.java.controller;
 
 import java.util.ArrayList;
 
-import main.java.pieces.Bishop;
-import main.java.pieces.King;
-import main.java.pieces.Knight;
-import main.java.pieces.Pawn;
-import main.java.pieces.Piece;
-import main.java.pieces.Queen;
-import main.java.pieces.Rock;
-import main.java.players.Player;
+import main.java.model.Bishop;
+import main.java.model.King;
+import main.java.model.Knight;
+import main.java.model.Pawn;
+import main.java.model.Piece;
+import main.java.model.Player;
+import main.java.model.Queen;
+import main.java.model.Rock;
 
 
 
@@ -155,7 +155,7 @@ public class Analyser {
 						Rock rock = (Rock) board[7][0];
 						if(rock.isRochade()){
 							System.out.println("Turm darf rochieren");
-							if(board[7][6].getSymbol().equals("  ") && board[7][5].getSymbol().equals("  ")){
+							if(board[7][6].getType()==null && board[7][5].getType()==null){
 								System.out.println("Felder dazwischen sind frei");
 								return true;
 							}
@@ -173,7 +173,7 @@ public class Analyser {
 					if(board[0][7] instanceof Rock){
 						Rock rock = (Rock) board[0][0];
 						if(rock.isRochade()){
-							if(board[0][6].getSymbol().equals("  ") && board[0][5].getSymbol().equals("  ")){
+							if(board[0][6].getType()==null && board[0][5].getType()==null){
 								return true;
 							}
 						}
@@ -197,7 +197,7 @@ public class Analyser {
 					if(board[7][0] instanceof Rock){
 						Rock rock = (Rock) board[7][0];
 						if(rock.isRochade()){
-							if(board[7][1].getSymbol().equals("  ") && board[7][2].getSymbol().equals("  ") && board[7][3].getSymbol().equals("  ")){
+							if(board[7][1].getType()==null && board[7][2].getType()==null && board[7][3].getType()==null){
 								return true;
 							}
 						}
@@ -214,7 +214,7 @@ public class Analyser {
 					if(board[0][0] instanceof Rock){
 						Rock rock = (Rock) board[0][0];
 						if(rock.isRochade()){
-							if(board[0][1].getSymbol().equals("  ") && board[0][2].getSymbol().equals("  ") && board[0][3].getSymbol().equals("  ")){
+							if(board[0][1].getType()==null && board[0][2].getType()==null && board[0][3].getType()==null){
 								return true;
 							}
 						}

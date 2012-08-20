@@ -1,4 +1,4 @@
-package main.java.pieces;
+package main.java.model;
 
 public class Piece {
 	

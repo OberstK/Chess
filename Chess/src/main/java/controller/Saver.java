@@ -6,8 +6,8 @@ import java.beans.XMLEncoder;
 import java.io.*;
 import java.util.ArrayList;
 
-import main.java.pieces.Piece;
-import main.java.players.Player;
+import main.java.model.Piece;
+import main.java.model.Player;
 
 
 

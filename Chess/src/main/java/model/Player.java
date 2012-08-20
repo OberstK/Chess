@@ -1,4 +1,4 @@
-package main.java.players;
+package main.java.model;
 
 public class Player {
 	
