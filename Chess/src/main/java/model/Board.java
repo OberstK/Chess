@@ -5,8 +5,9 @@ import java.util.ArrayList;
 public class Board {
 	
 	private Piece[][] board = new Piece[8][8];
-	private ArrayList<Piece> outPieces = new ArrayList<Piece>();
+	private ArrayList<Piece> outList = new ArrayList<Piece>();
 	private Player[] playersInGame = new Player[2];
+	
 
 	public Piece[][] getBoard() {
 		return board;
@@ -16,12 +17,12 @@ public class Board {
 		this.board = board;
 	}
 
-	public ArrayList<Piece> getOutPieces() {
-		return outPieces;
+	public ArrayList<Piece> getOutList() {
+		return outList;
 	}
 
-	public void setOutPieces(ArrayList<Piece> outPieces) {
-		this.outPieces = outPieces;
+	public void setOutList(ArrayList<Piece> outPieces) {
+		this.outList = outPieces;
 	}
 
 	public Player[] getPlayersInGame() {
@@ -57,5 +58,45 @@ public class Board {
 			}
 		}
 		return king;
+	}
+	
+	public Piece getPieceOnBoard(int x, int y){
+		int colPos = x;
+		int rowPos = y;
+		
+		if(board[rowPos][colPos].getType()==null){
+			return null;
+		}
+		return board[rowPos][colPos];
+	}
+	
+	public Player getPlayerOnTurn(){
+		if(playersInGame[0].isOnTurn()){
+			return playersInGame[0];
+		}else{
+			return playersInGame[1];
+		}
+	}
+	
+	public Player getPlayerNotOnTurn(){
+		if(playersInGame[0].isOnTurn()){
+			return playersInGame[1];
+		}else{
+			return playersInGame[0];
+		}
+	}
+	
+	public void generatePlayers(){
+		//Spieler 1
+		Player player1 = new Player("Spieler 1", true);
+		//Spieler 2
+		Player player2 = new Player("Spieler 2", false);
+
+		playersInGame[0] = player1;
+		playersInGame[1] = player2;
+	}
+	
+	public void addPieceToOutList(Piece figur){
+		outList.add(figur);
 	}
 }

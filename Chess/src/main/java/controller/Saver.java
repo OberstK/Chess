@@ -36,7 +36,7 @@ public class Saver {
 
 	}
 	
-public void savePlayersToXML(Player[] spieler){
+	public void savePlayersToXML(Player[] spieler){
 
 	    try {
 	        XMLEncoder en = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("Players.xml")));
@@ -48,6 +48,19 @@ public void savePlayersToXML(Player[] spieler){
 	        e.printStackTrace();
 	    }
 
+	}
+	
+	public void saveOutListToXML(ArrayList<Piece> outList){
+		
+		try {
+	        XMLEncoder en = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("Outs.xml")));
+	        for (Object o : outList) {
+	            en.writeObject(o);
+	        }
+	        en.close();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 
 
@@ -101,5 +114,25 @@ public void savePlayersToXML(Player[] spieler){
 	    }
 	  
 	    return spieler;
+	}
+	
+	public ArrayList<Piece> loadOutListFromXML(){
+		ArrayList<Piece> loadList = new ArrayList<Piece>();
+		boolean objectsLeft = true;
+		
+		try {
+	        XMLDecoder de = new XMLDecoder(new BufferedInputStream(new FileInputStream("Outs.xml")));
+	        while (objectsLeft) {
+	        	loadList.add((Piece) de.readObject());
+	        }
+	        de.close();
+	    } catch (java.lang.ArrayIndexOutOfBoundsException e){
+	        objectsLeft = false;
+	    } catch (FileNotFoundException e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+
+	    return loadList;
 	}
 }

@@ -39,16 +39,22 @@ public class Piece {
 	public void setPositionY(int positionY) {
 		this.positionY = positionY;
 	}
-	
-	
-	public Piece(){
-		
-	}
 	public String getType() {
 		return type;
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	public boolean isEmptyPiece(){
+		if(this.getType()==null){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public Piece(){
+		
 	}
 
 }

@@ -1,10 +1,12 @@
 package main.java.gui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -52,11 +54,15 @@ public class MainView extends JFrame{
 			getContentPane().add(fenster);
 			this.setSize(1100,950);
 			
+			fenster.add(new JButton("Neues Spiel"));
+			fenster.add(new JButton("Speichern und Beenden"));
+			
 			chessBoard = new JPanel();
-			fenster.add(chessBoard, JLayeredPane.DEFAULT_LAYER);
 			chessBoard.setLayout( new GridLayout(8, 8) );
-			chessBoard.setBounds(0, 0, 800, 800);
+			chessBoard.setBounds(100, 100, 800, 800);
 			chessBoard.setAlignmentX(MAXIMIZED_HORIZ);
+			fenster.add(chessBoard, JLayeredPane.DEFAULT_LAYER);
+
 			
 			for(int i=7; i>=0; i--){
 				for(int j=0; j<=7; j++){
@@ -74,6 +80,22 @@ public class MainView extends JFrame{
 				}
 			}
 			this.setVisible(true);
+		}
+		
+		public void updateBoard(Piece[][] board){
+			Component[] c = chessBoard.getComponents();
+			for(Component ele: c){
+				if(ele instanceof Square){
+					Square square = (Square) ele;
+					square.removeAll();
+					//System.out.println(square.getComponents());
+					int x = square.getxPos();
+					int y = square.getyPos();
+					//System.out.println(square);
+					square.add(new ChessPiece(board[y][x].getType(), board[y][x].getColor()));
+				}
+			}
+			chessBoard.repaint();
 		}
 		
 		public Square findSquareByPos(int x, int y){

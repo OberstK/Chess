@@ -11,15 +11,7 @@ public class Controller {
 	
 	
 	//Hole Figur an dieser Position
-	public Piece getPieceOnBoard(int x, int y, Board boardObj){
-		int colPos = x;
-		int rowPos = y;
-		
-		if(boardObj.getBoard()[rowPos][colPos].getType()==null){
-			return null;
-		}
-		return boardObj.getBoard()[rowPos][colPos];
-	}
+
 	
 	//Hole den jeweiligen König
 	public King getKingOnBoard(boolean owner, Piece[][] board){
@@ -96,24 +88,11 @@ public class Controller {
 		board[zeile][spalte] = this.fillEmptySpot(spalte, zeile);
 	}
 	
-	public Player getPlayerOnTurn(Player[] playersInGame){
-		if(playersInGame[0].isOnTurn()){
-			return playersInGame[0];
-		}else{
-			return playersInGame[1];
-		}
-	}
-	
-	public Player getPlayerNotOnTurn(Player[] playersInGame){
-		if(playersInGame[0].isOnTurn()){
-			return playersInGame[1];
-		}else{
-			return playersInGame[0];
-		}
-	}
+
 	
 	//Wechsel den "Dran"-Status der Spieler
-	public void changePlayers(Player[] playersInGame){
+	public void changePlayers(Board boardObj){
+		Player[] playersInGame = boardObj.getPlayersInGame();
 		//Spieler wechseln
 		for(int i=0; i<=1; i++){
 			playersInGame[i].setOnTurn(!(playersInGame[i].isOnTurn()));
@@ -125,19 +104,7 @@ public class Controller {
 		}
 	}
 	
-	//Erzeuge die Spieler für ein neues Spiel
-	public Player[] generatePlayers(){
-		Player[] players = new Player[2];
-		//Spieler 1
-		Player player1 = new Player("Spieler 1", true);
-		//Spieler 2
-		Player player2 = new Player("Spieler 2", false);
 
-		players[0] = player1;
-		players[1] = player2;
-
-		return players;
-	}
 	
 	//Erzeuge eine "leere" Figur
 	public Piece fillEmptySpot(int x, int y){
@@ -153,7 +120,8 @@ public class Controller {
 		
 		if(piece instanceof Pawn){
 			Pawn pawn = (Pawn) piece;
-			moves = pawn.getPossibleMoveDestinations(x, y, board, owner);	
+			moves = pawn.getPossibleMoveDestinations(x, y, board, owner);
+			moves.addAll(pawn.getPossibleHitDestinations(x, y, board, owner));
 		}else if(piece instanceof Knight){
 			Knight knight = (Knight) piece;
 			moves = knight.getPossibleMoveDestinations(x, y);
@@ -173,18 +141,71 @@ public class Controller {
 		
 		return moves;
 	}
-	
-	
-	
+
 	/*Bewege eine Figur von seiner Startposition zu seiner Zielposition
 	 * Diverse Prüfungen finden statt
 	 */
-	public boolean bewegeFigur(Piece figur, int xPosEnd, int yPosEnd, Board boardObj, ArrayList<Piece> outPieces){
-		//Initiierung von Variablen zur Überprüfung des Zuges
-		boolean success= false;
-		boolean test = false;
+	
+	public boolean macheZug(Piece figur, int xPosEnd, int yPosEnd, Board boardObj){
 		Piece[][] board = boardObj.getBoard();
+		boolean possible = false;
+		boolean enemy = false;
 		
+		if(this.testIfMoveAllowed(figur, xPosEnd, yPosEnd, board)){
+			//Testen ob Feld leer ist
+			if(analyse.testIfEmpty(xPosEnd, yPosEnd, board)){
+				possible=true;
+			//Testen ob auf Feld ein Gegner steht
+			}else if(analyse.testIfEnemy(figur.isOwner(), xPosEnd, yPosEnd, board)){
+				enemy=true;
+				possible=true;
+			//Wenn belegt -> Gib false zurück
+			}else{
+				System.out.println("Feld belegt!");
+				return false;
+			}
+		}else{
+			System.out.println("Zug nicht erlaubt!");
+			return false;
+		}
+		if(possible){
+			//Zug testweise durchführen
+			int xPosStart = figur.getPositionX();
+			int yPosStart = figur.getPositionY();
+			Piece altFigur = boardObj.getPieceOnBoard(xPosEnd, yPosEnd);
+			figur.setPositionX(xPosEnd);
+			figur.setPositionY(yPosEnd);
+			boardObj.fillEmptySpot(xPosStart, yPosStart);
+			boardObj.setPieceOnSquare(figur);
+			
+			//testen ob man jetzt im Schach steht
+			if(analyse.testIfOwnerPutsInCheck(board, boardObj.getPlayerNotOnTurn().isOwner())){
+				System.out.println("Nach dem Zug stehst du im Schach!");
+				//Zug rückgängig machen
+				figur.setPositionX(xPosStart);
+				figur.setPositionY(yPosStart);
+				boardObj.setPieceOnSquare(figur);
+				if(altFigur==null){
+					boardObj.fillEmptySpot(xPosEnd, yPosEnd);
+				}else{
+					boardObj.setPieceOnSquare(altFigur);
+				}
+				return false;
+			}else if(enemy){
+				boardObj.addPieceToOutList(altFigur);
+				System.out.println(altFigur.getType()+" geschlagen!");
+				return true;
+			}else{
+				return true;
+			}
+			
+			
+		}
+		
+		return true;
+	}
+	
+	public boolean testIfMoveAllowed(Piece figur, int xPosEnd, int yPosEnd, Piece[][] board){
 		//Start und Endposition holen
 		int xPosStart = figur.getPositionX();
 		int yPosStart = figur.getPositionY();
@@ -193,73 +214,44 @@ public class Controller {
 		if(figur instanceof Pawn){
 			Pawn pawn = (Pawn) figur;
 			if(pawn.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board, pawn.isOwner())){
-				test = true;
+				return true;
 			}else if(pawn.hitPossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board, pawn.isOwner())){
-				test = true;
+				return true;
 			}
 		//Prüfung ob Springer und ob Zug möglich ist
 		}else if(figur instanceof Knight){
 			Knight knight = (Knight) figur;
 			if(knight.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd)){
-				test = true;
+				return true;
 			}
 		//Prüfung ob Königin und ob Zug möglich ist
 		}else if(figur instanceof Queen){
 			Queen queen = (Queen) figur;
 			if(queen.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board)){
-				test = true;
+				return true;
 			}
 		//Prüfung ob Läufer und ob Zug möglich ist
 		}else if(figur instanceof Bishop){
 			Bishop bishop = (Bishop) figur;
 			if(bishop.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board)){
-				test = true;
+				return true;
 			}
 		//Prüfung ob Turm und ob Zug möglich ist
 		}else if(figur instanceof Rock){
 			Rock rock = (Rock) figur;
 			if(rock.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd, board)){
-				test=true;
+				return true;
 			}
 		//Prüfung ob König und ob Zug möglich ist
 		}else if(figur instanceof King){
 			King king = (King) figur;
 			if(king.movePossible(xPosStart, yPosStart, xPosEnd, yPosEnd)){
-				test=true;
+				return true;
 			}
 		}
-			
-		if(test){
-			//Testen ob Feld leer ist
-			if(analyse.testIfEmpty(xPosEnd, yPosEnd, board)){
-				figur.setPositionX(xPosEnd);
-				figur.setPositionY(yPosEnd);
-				this.emptyOldPosition(yPosStart, xPosStart, board);
-				this.putPieceOnBoard(figur, board);
-				success=true;
-				return success;
-			//Testen ob auf Feld ein Gegner steht
-			}else if(analyse.testIfEnemy(figur.isOwner(), xPosEnd, yPosEnd, board)){
-				this.hitOutPiece(xPosEnd, yPosEnd, outPieces, board);
-				figur.setPositionX(xPosEnd);
-				figur.setPositionY(yPosEnd);
-				this.emptyOldPosition(yPosStart, xPosStart, board);
-				this.putPieceOnBoard(figur, board);		
-				success=true;
-				return success;
-			//Wenn belegt -> Gib false zurück
-			}else{
-				System.out.println("Feld belegt!");
-				success=false;
-				return success;
-			}
-		}else{
-			//Wenn obige Prüfungen auf Figur fehlschlagen, ist der Zug nicht möglich (Regeln verletzt, etc.)
-			System.out.println("Dieser Zug ist nicht gültig!");
-			success=false;
-			return success;
-		}
+		return false;
 	}
+
 	
 	//Führt eine kurze Rochade durch -> nimmt Farbe als Wert an
 	public void doKurzeRochade(boolean owner, Board boardObj){
@@ -271,8 +263,8 @@ public class Controller {
 			i=0;
 		}
 		//Holt beteiligten König und Turm
-		Rock rock = (Rock) this.getPieceOnBoard(7, i+1, boardObj);
-		King king = (King) this.getPieceOnBoard(4, i+1, boardObj);
+		Rock rock = (Rock) boardObj.getPieceOnBoard(7, i+1);
+		King king = (King) boardObj.getPieceOnBoard(4, i+1);
 		//Setzt neue Position
 		king.setPositionX(6);
 		rock.setPositionX(5);
@@ -294,8 +286,8 @@ public class Controller {
 			i=0;
 		}
 		//Holt beteiligten König und Turm
-		Rock rock = (Rock) this.getPieceOnBoard(0, i+1, boardObj);
-		King king = (King) this.getPieceOnBoard(4, i+1, boardObj);
+		Rock rock = (Rock) boardObj.getPieceOnBoard(0, i+1);
+		King king = (King) boardObj.getPieceOnBoard(4, i+1);
 		//Setzt neue Position
 		king.setPositionX(2);
 		rock.setPositionX(3);

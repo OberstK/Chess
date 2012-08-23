@@ -24,7 +24,6 @@ import main.java.model.*;
 public class GameMaster {
 	
 	private final MainView _view;
-	private final CommandListener listener;
 	private final Saver saver;
 	private final Analyser analyse;
 	private final Controller control;
@@ -35,37 +34,42 @@ public class GameMaster {
 	private Square startPanel;
 	private Square endPanel;
 	
-	
-	public static Player[] playersInGame = new Player[2];
-	public static ArrayList<Piece> outPieces= new ArrayList<Piece>();
-	
-	
-	//Save and Load
+	//Saves
 	public void saveBoard(){
 		saver.saveBoardToXML(_modelBoard.getBoard());
 	}
 	
-	public Piece[][] loadBoard(){
-		return saver.loadBoardFromXML();
+	public void savePlayers(){
+		saver.savePlayersToXML(_modelBoard.getPlayersInGame());
 	}
 	
-	public void savePlayers(){
-		saver.savePlayersToXML(playersInGame);
+	public void saveOutList(){
+		saver.saveOutListToXML(_modelBoard.getOutList());
+	}
+	
+	//Loads
+	public Piece[][] loadBoard(){
+		return saver.loadBoardFromXML();
 	}
 	
 	public Player[] loadPlayers(){
 		return saver.loadPlayersFromXML();
 	}
 	
+	public ArrayList<Piece> loadOutList(){
+		return saver.loadOutListFromXML();
+	}
+	
+	//Start und Reset
 	public void resetBoard() {
 		_modelBoard.setBoard(control.generateBoard());	
 	}
 
 	public void startGame() {
-		playersInGame = control.generatePlayers();
+		_modelBoard.generatePlayers();
 	}
 	
-	
+
 	class MyMouseListener implements MouseListener{
 
 		@Override
@@ -88,15 +92,15 @@ public class GameMaster {
 			startPanel = (Square) c.getParent();
 			int xViewStart = startPanel.getxPos();
 			int yViewStart = startPanel.getyPos();
-			//Pr�fe ob Figur an dieser Stelle
+			//Pruefe ob Figur an dieser Stelle
 			if(analyse.testIfEmpty(xViewStart, yViewStart, board)){
 				System.out.println("Keine Figur an dieser Stelle!");
-			//Pr�fe ob eigene Figur
-			}else if(analyse.testIfEnemy(control.getPlayerOnTurn(playersInGame).isOwner(), xViewStart, yViewStart, board)){
+			//Pruefe ob eigene Figur
+			}else if(analyse.testIfEnemy(_modelBoard.getPlayerOnTurn().isOwner(), xViewStart, yViewStart, board)){
 				System.out.println("Das ist keine von deinen Figuren!");
 			//Sonst bewegen
 			}else{
-				for(String entry: control.getPositionOfPosDestSquares(control.getPieceOnBoard(xViewStart, yViewStart , _modelBoard), xViewStart, yViewStart, board, control.getPlayerOnTurn(playersInGame).isOwner())){
+				for(String entry: control.getPositionOfPosDestSquares(_modelBoard.getPieceOnBoard(xViewStart, yViewStart), xViewStart, yViewStart, board, _modelBoard.getPlayerOnTurn().isOwner())){
 					String[] parts = entry.split(",");
 			        parts[0] = parts[0].trim();
 					parts[1] = parts[1].trim();
@@ -122,64 +126,37 @@ public class GameMaster {
 			if (chessPiece == null) return;
 			_view.resetColorSquares();
 			chessPiece.setVisible(false);
+			//Ziel-Feld holen
 			Component c =  _view.getChessBoard().findComponentAt(e.getX(), e.getY());
+			if (c instanceof JLabel){
+				Container end = c.getParent();
+				endPanel = (Square) end;
+			}else{
+				Container end = (Container)c;
+				endPanel = (Square) end;
+			}
 			
 			int xViewStart = startPanel.getxPos();
 			int yViewStart = startPanel.getyPos();
-			int xViewEnd = 0;
-			int yViewEnd = 0;
-			if (c instanceof JLabel){
-				Container parent = c.getParent();
-				endPanel = (Square) parent;
-				xViewEnd = endPanel.getxPos();
-				yViewEnd = endPanel.getyPos();
-				if(control.bewegeFigur(control.getPieceOnBoard(xViewStart, yViewStart , _modelBoard), xViewEnd, yViewEnd, _modelBoard, outPieces)){
-					if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner())){
-						System.out.println("Nach dem Zug stehst du im Schach!");
-						if(control.bewegeFigur(control.getPieceOnBoard(xViewEnd, yViewEnd , _modelBoard), xViewStart, yViewStart, _modelBoard, outPieces)){
-							System.out.println("Zurueckgesetzt!");
-						}else{
-							System.out.println("Schwerwiegender Fehler!");
-						}
-						startPanel.add(chessPiece);
-					}else{
-						parent.remove(0);
-						parent.add(chessPiece);
-						control.changePlayers(playersInGame);
-					}
-				}else{
-					startPanel.add(chessPiece);
-				}
-			}
-			else
-			{
-				Container parent = (Container)c;
-				endPanel = (Square) parent;
-				xViewEnd = endPanel.getxPos();
-				yViewEnd = endPanel.getyPos();
-				if(control.bewegeFigur(control.getPieceOnBoard(xViewStart, yViewStart , _modelBoard), xViewEnd, yViewEnd, _modelBoard, outPieces)){
-					if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner())){
-						System.out.println("Nach dem Zug stehst du im Schach!");
-						startPanel.add(chessPiece);
-					}else{
-						parent.add(chessPiece);
-						control.changePlayers(playersInGame);
-					}
-				}else{
-					startPanel.add(chessPiece);
-				}
-			}
-			chessPiece.setVisible(true);
+			int xViewEnd = endPanel.getxPos();
+			int yViewEnd = endPanel.getyPos();
 			
+			if(control.macheZug(_modelBoard.getPieceOnBoard(xViewStart, yViewStart), xViewEnd, yViewEnd, _modelBoard)){
+				_view.updateBoard(board);
+				control.changePlayers(_modelBoard);
+			}else{
+				_view.updateBoard(board);
+			}
+
 			if(xViewStart != xViewEnd && yViewStart != yViewEnd){
-				//Pr�fe auf Schachmatt des Spielers der jetzt dran ist
-				if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner()) && control.testMovesForCheckMate(control.getPlayerOnTurn(playersInGame).isOwner(), _modelBoard)){
-					System.out.println(control.getPlayerNotOnTurn(playersInGame).getColor()+" setzt "+control.getPlayerOnTurn(playersInGame).getColor()+" Schachmatt!");
+				//Pruefe auf Schachmatt des Spielers der jetzt dran ist
+				if(analyse.testIfOwnerPutsInCheck(board, _modelBoard.getPlayerNotOnTurn().isOwner()) && control.testMovesForCheckMate(_modelBoard.getPlayerOnTurn().isOwner(), _modelBoard)){
+					System.out.println(_modelBoard.getPlayerNotOnTurn().getColor()+" setzt "+_modelBoard.getPlayerOnTurn().getColor()+" Schachmatt!");
 					//gameEnded = true;
 				}
 				
-				//Pr�fe auf Schach des Spielers der jetzt dran ist
-				if(analyse.testIfOwnerPutsInCheck(board, control.getPlayerNotOnTurn(playersInGame).isOwner())){
+				//Pruefe auf Schach des Spielers der jetzt dran ist
+				if(analyse.testIfOwnerPutsInCheck(board, _modelBoard.getPlayerNotOnTurn().isOwner())){
 					System.out.println("Schach!");
 				}
 			}
@@ -382,13 +359,6 @@ public class GameMaster {
 			//viewer.zeigeSpielBrett(board);
 			this.listenUser();
 			
-		}else if(command.getCommand().equals(CommandConst.ERR)){
-			//Error-Befehl
-			System.out.println("Fehler! Befehlsformat einhalten");
-			this.listenUser();
-		}else{
-			//Fehlerbehandlung
-			System.out.println("Fehler!");
 		}
 	}
 	
@@ -399,10 +369,11 @@ public class GameMaster {
 		analyse = new Analyser();
 		control = new Controller();
 		_modelBoard = new Board();
-		if (new File("Board.xml").exists() && new File("Players.xml").exists()) {
+		if (new File("Board.xml").exists() && new File("Players.xml").exists() && new File("Outs.xml").exists()) {
         	System.out.println("Gespeichertes Spiel gefunden. Lade...");
         	_modelBoard.setBoard(this.loadBoard());
-        	playersInGame = this.loadPlayers();
+        	_modelBoard.setPlayersInGame(this.loadPlayers());
+        	_modelBoard.setOutList(this.loadOutList());
         	System.out.println("Spiel geladen.");
         	//view.zeigeSpielBrett(board);
         } else {
@@ -412,12 +383,11 @@ public class GameMaster {
         	System.out.println("Neues Spiel gestartet. Viel Spass.");
         	//view.zeigeSpielBrett(board);
         }
-		String dran = control.getPlayerOnTurn(playersInGame).getName();
-		String dranColor = control.getPlayerOnTurn(playersInGame).getColor();
+		String dran = _modelBoard.getPlayerOnTurn().getName();
+		String dranColor = _modelBoard.getPlayerOnTurn().getColor();
 		System.out.println(dran+" - "+dranColor+" ist dran!");
 		_view = new MainView(_modelBoard.getBoard());
-		addListener();
-		listener = new CommandListener();
+		this.addListener();
 
 	}
 	

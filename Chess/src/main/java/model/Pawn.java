@@ -21,39 +21,35 @@ public class Pawn extends Piece{
 		if((owner && yPosStart==1)||(owner==false && yPosStart==6)){
 			doubleMove = true;
 		}
-		
-		//Wei�
-				if(owner){
-					//Bewegung nach Vorne (1 und 2 Schritte)
-					if(yPosStart+1<=7){
-						if(board[yPosStart+1][xPosStart].getType()==null){
-							possibleDestinations.add(xPosStart+","+(yPosStart+1));
-							if(yPosStart+2<=7){
-								if(doubleMove && board[yPosStart+2][xPosStart].getType()==null){
-									possibleDestinations.add(xPosStart+","+(yPosStart+2));
-								}
-							}
+		//Weiss
+		if(owner){
+			//Bewegung nach Vorne (1 und 2 Schritte)
+			if(yPosStart+1<=7){
+				if(board[yPosStart+1][xPosStart].getType()==null){
+					possibleDestinations.add(xPosStart+","+(yPosStart+1));
+					if(yPosStart+2<=7){
+						if(doubleMove && board[yPosStart+2][xPosStart].getType()==null){
+							possibleDestinations.add(xPosStart+","+(yPosStart+2));
 						}
 					}
-
-					
 				}
+			}	
+		}
 
-				//Schwarz
-				else{
-					//Bewegung nach Vorne (1 und 2 Schritte)
-						if(yPosStart-1>=0){
-							if(board[yPosStart-1][xPosStart].getType()==null){
-								possibleDestinations.add(xPosStart+","+(yPosStart-1));
-								if(yPosStart-2>=0){
-									if(doubleMove && board[yPosStart-2][xPosStart].getType()==null){
-										possibleDestinations.add(xPosStart+","+(yPosStart-2));
-									}
-								}
-							}
+		//Schwarz
+		else{
+			//Bewegung nach Vorne (1 und 2 Schritte)
+			if(yPosStart-1>=0){
+				if(board[yPosStart-1][xPosStart].getType()==null){
+					possibleDestinations.add(xPosStart+","+(yPosStart-1));
+					if(yPosStart-2>=0){
+						if(doubleMove && board[yPosStart-2][xPosStart].getType()==null){
+							possibleDestinations.add(xPosStart+","+(yPosStart-2));
 						}
-
+					}
 				}
+			}
+		}
 		
 		return possibleDestinations;
 	}
@@ -64,36 +60,37 @@ public class Pawn extends Piece{
 		
 		//Weiss
 		if(owner){
-			//Schlagen nach rechts
-			if(yPosStart-1 >= 0 && xPosStart+1 <= 7){
-				if(!board[yPosStart-1][xPosStart+1].getSymbol().equals("  ") && board[yPosStart-1][xPosStart+1].isOwner()!=owner){
-					possibleDestinations.add((xPosStart+1)+","+(yPosStart-1));
-				}
-			}
-			
-			//Schlagen nach links
-			if(yPosStart-1 >= 0 && xPosStart-1 >= 0){
-				if(!board[yPosStart-1][xPosStart-1].getSymbol().equals("  ") && board[yPosStart-1][xPosStart-1].isOwner()!=owner){
-					possibleDestinations.add((xPosStart-1)+","+(yPosStart-1));
-				}
-			}
-			
-		//Schwarz
-		}else{
 
 			//Schlagen nach rechts
 			if(yPosStart+1 <= 7 && xPosStart+1 <= 7){
-				if(!board[yPosStart+1][xPosStart+1].getSymbol().equals("  ") && board[yPosStart+1][xPosStart+1].isOwner()!=owner){
+				if(!board[yPosStart+1][xPosStart+1].isEmptyPiece() && board[yPosStart+1][xPosStart+1].isOwner()!=owner){
 					possibleDestinations.add((xPosStart+1)+","+(yPosStart+1));
 				}
 			}
 			
 			//Schlagen nach links
 			if(yPosStart+1 <=7 && xPosStart-1>=0){
-				if(!board[yPosStart+1][xPosStart-1].getSymbol().equals("  ") && board[yPosStart+1][xPosStart-1].isOwner()!=owner){
+				if(!board[yPosStart+1][xPosStart-1].isEmptyPiece() && board[yPosStart+1][xPosStart-1].isOwner()!=owner){
 					possibleDestinations.add((xPosStart-1)+","+(yPosStart+1));
 				}
 			}
+			
+		//Schwarz
+		}else{
+			//Schlagen nach rechts
+			if(yPosStart-1 >= 0 && xPosStart+1 <= 7){
+				if(!board[yPosStart-1][xPosStart+1].isEmptyPiece() && board[yPosStart-1][xPosStart+1].isOwner()!=owner){
+					possibleDestinations.add((xPosStart+1)+","+(yPosStart-1));
+				}
+			}
+			
+			//Schlagen nach links
+			if(yPosStart-1 >= 0 && xPosStart-1 >= 0){
+				if(!board[yPosStart-1][xPosStart-1].isEmptyPiece() && board[yPosStart-1][xPosStart-1].isOwner()!=owner){
+					possibleDestinations.add((xPosStart-1)+","+(yPosStart-1));
+				}
+			}
+
 		}
 		
 		return possibleDestinations;
