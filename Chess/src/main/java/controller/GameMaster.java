@@ -86,6 +86,7 @@ public class GameMaster {
 			Component c =  _view.getChessBoard().findComponentAt(e.getX(), e.getY());
 	 
 			if (c instanceof JPanel) return;
+			if( c == null) return;
 			Point startLocation = c.getParent().getLocation();
 			xAdjustment = startLocation.x - e.getX();
 			yAdjustment = startLocation.y - e.getY();

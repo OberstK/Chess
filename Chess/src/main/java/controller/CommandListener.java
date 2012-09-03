@@ -51,7 +51,7 @@ public class CommandListener {
 	    Scanner scanner = new Scanner(System.in);
 	    input = scanner.nextLine();
 	    input = input.toLowerCase();
-	    
+	    scanner.close();
 	    Command command = new Command();
 
 	    if (input.contains("zug")) {
@@ -101,6 +101,7 @@ public class CommandListener {
 	    	System.out.println("Input nicht erkannt!");
 	    	return null;
 	    }
+	    
 	
 	}
 	

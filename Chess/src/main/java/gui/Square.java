@@ -36,7 +36,7 @@ public class Square extends JPanel{
     	}else if(yPos == 0){
     		this.setyPos(7);
     	}else{
-    		System.out.println("Überprüfe Layout, zu viele Felder");
+    		System.out.println("Ueberpruefe, zu viele Felder");
     	}*/
         Border blackline = BorderFactory.createLineBorder(Color.black);
         setBorder(blackline);
@@ -70,6 +70,10 @@ public class Square extends JPanel{
 
 	public void setBackColor(Color backColor) {
 		this.backColor = backColor;
+	}
+	
+	public Square(){
+		
 	}
 
 }
