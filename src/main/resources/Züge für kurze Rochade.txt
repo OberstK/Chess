@@ -1,0 +1,7 @@
+Zug: G8 auf H6
+Zug: A2 auf A3
+Zug: E7 auf E6
+Zug: B2 auf B3
+Zug: F8 auf D6
+Zug: C2 auf C3
+kurze Rochade
