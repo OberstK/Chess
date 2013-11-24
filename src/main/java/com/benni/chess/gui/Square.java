@@ -1,4 +1,4 @@
-package main.java.gui;
+package com.benni.chess.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

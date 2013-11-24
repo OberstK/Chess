@@ -1,8 +1,8 @@
-package main.java.controller;
+package com.benni.chess.controller;
 
 import java.util.ArrayList;
 
-import main.java.model.*;
+import com.benni.chess.model.*;
 
 
 public class Controller {

@@ -1,15 +1,8 @@
-package main.java.controller;
+package com.benni.chess.controller;
 
 import java.util.ArrayList;
 
-import main.java.model.Bishop;
-import main.java.model.King;
-import main.java.model.Knight;
-import main.java.model.Pawn;
-import main.java.model.Piece;
-import main.java.model.Player;
-import main.java.model.Queen;
-import main.java.model.Rock;
+import com.benni.chess.model.*;
 
 
 

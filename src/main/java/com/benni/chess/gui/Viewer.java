@@ -1,6 +1,6 @@
-package main.java.gui;
+package com.benni.chess.gui;
 
-import main.java.model.*;
+import com.benni.chess.model.*;
 
 public class Viewer {
 	

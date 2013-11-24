@@ -44,3 +44,8 @@ Thumbs.db
 *.iml
 *.ipr
 *.iws
+
+
+# Maven #
+#########
+target

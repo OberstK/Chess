@@ -1,4 +1,4 @@
-package main.java.controller;
+package com.benni.chess.controller;
 
 import java.util.Scanner;
 

@@ -1,4 +1,4 @@
-package main.java.gui;
+package com.benni.chess.gui;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;

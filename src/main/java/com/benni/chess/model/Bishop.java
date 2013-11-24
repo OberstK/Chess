@@ -1,4 +1,4 @@
-package main.java.model;
+package com.benni.chess.model;
 
 import java.util.ArrayList;
 

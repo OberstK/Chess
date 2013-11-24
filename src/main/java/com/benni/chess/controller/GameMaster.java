@@ -1,5 +1,4 @@
-package main.java.controller;
-
+package com.benni.chess.controller;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -15,10 +14,9 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
-import main.java.gui.MainView;
-import main.java.gui.ChessPiece;
-import main.java.gui.Square;
-import main.java.model.*;
+import com.benni.chess.gui.*;
+import com.benni.chess.model.*;
+
 
 
 public class GameMaster {

@@ -1,4 +1,4 @@
-package main.java.controller;
+package com.benni.chess.controller;
 
 
 import java.beans.XMLDecoder;
@@ -6,8 +6,7 @@ import java.beans.XMLEncoder;
 import java.io.*;
 import java.util.ArrayList;
 
-import main.java.model.Piece;
-import main.java.model.Player;
+import com.benni.chess.model.*;
 
 
 

@@ -1,4 +1,4 @@
-package main.java.gui;
+package com.benni.chess.gui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -18,7 +18,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-import main.java.model.Piece;
+import com.benni.chess.model.Piece;
 
 
 

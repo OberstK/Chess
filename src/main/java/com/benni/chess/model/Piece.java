@@ -1,4 +1,4 @@
-package main.java.model;
+package com.benni.chess.model;
 
 public class Piece {
 	
