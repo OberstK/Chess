@@ -1,0 +1,17 @@
+main\java\gui\ChessPiece.class
+main\java\model\Queen.class
+main\java\model\King.class
+main\java\controller\GameMaster.class
+main\java\model\Board.class
+main\java\controller\Controller.class
+main\java\model\Bishop.class
+main\java\model\Player.class
+main\java\controller\GameMaster$MyMouseListener.class
+main\java\model\Pawn.class
+main\java\model\Knight.class
+main\java\gui\MainView.class
+main\java\gui\Square.class
+main\java\model\Rock.class
+main\java\controller\Saver.class
+main\java\controller\GameMaster$MyMouseMoveListener.class
+main\java\controller\Analyser.class
